@@ -1,0 +1,31 @@
+package haedal.Bootcamp2024_2.domain;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor
+public class Like {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long likeId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference  // 직렬화 시 무시
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    @JsonBackReference  // 직렬화 시 무시
+    private Post post;
+
+    public Like(User user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
+}
