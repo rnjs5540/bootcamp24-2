@@ -19,16 +19,15 @@ public class LikeService {
     private LikeRepository likeRepository;
     @Autowired
     private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
 
-    public void likePost(User currentUser, Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-        if (likeRepository.existsByUserAndPost(currentUser, post)) {
+    public void likePost(User user, Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+        if (likeRepository.existsByUserAndPost(user, post)) {
             throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
         }
 
-        Like like = new Like(currentUser, post);
+        Like like = new Like(user, post);
         likeRepository.save(like);
     }
 

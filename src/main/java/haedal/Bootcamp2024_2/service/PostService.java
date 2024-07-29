@@ -31,7 +31,7 @@ public class PostService {
     }
 
     public Page<Post> getFollowingUsersPosts(User user, Pageable pageable) {
-        User managedUser = userRepository.findById(user.getId())
+       userRepository.findById(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         List<Long> followingIds = user.getFollowings().stream()
@@ -48,7 +48,7 @@ public class PostService {
 
         Page<Post> posts = postRepository.findByUser(user, pageable);
 
-        return posts.map(this::convertPostToDto);
+        return posts.map(post -> convertPostToDto(post));
     }
 
     private PostResponseDto convertPostToDto(Post post) {

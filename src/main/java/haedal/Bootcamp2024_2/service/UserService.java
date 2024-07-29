@@ -42,10 +42,8 @@ public class UserService {
     }
 
     public UserDetailResponseDto getUserDetail(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new IllegalStateException("유저가 존재하지 않습니다.");
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         return new UserDetailResponseDto(
                 id,
