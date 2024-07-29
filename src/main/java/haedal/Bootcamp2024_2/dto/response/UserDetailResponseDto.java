@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class UserDetailResponseDto {
-    private Long userId;
+    private Long id;
     private String username;
     private String name;
     private byte[] userImage;

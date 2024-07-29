@@ -13,7 +13,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -51,12 +51,12 @@ public class User {
     @JsonIgnore // 직렬화 시 무시
     private List<Follow> followers;
 
-    public User(String username, String password, String name, byte[] userImage, String bio) {
+    public User(String username, String password, String name) {
         this.username = username;
         this.password = password;
         this.name = name;
-        this.userImage = userImage;
-        this.bio = bio;
+        this.userImage = null;
+        this.bio = null;
         this.joinedAt = LocalDateTime.now();
     }
 }

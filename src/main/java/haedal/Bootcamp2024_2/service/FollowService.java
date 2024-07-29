@@ -46,28 +46,30 @@ public class FollowService {
     }
 
 
-    public Page<UserSimpleResponseDto> getFollowingUsers(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId)
+    public Page<UserSimpleResponseDto> getFollowingUsers(Long id, Pageable pageable) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         Page<Follow> followings = followRepository.findByFollower(user, pageable);
         return followings.map(follow -> new UserSimpleResponseDto(
-                follow.getFollowing().getUserId(),
+                follow.getFollowing().getId(),
                 follow.getFollowing().getUsername(),
-                follow.getFollowing().getUserImage()
+                follow.getFollowing().getUserImage(),
+                follow.getFollowing().getName()
         ));
     }
 
 
-    public Page<UserSimpleResponseDto> getFollowerUsers(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId)
+    public Page<UserSimpleResponseDto> getFollowerUsers(Long id, Pageable pageable) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         Page<Follow> followers = followRepository.findByFollowing(user, pageable);
         return followers.map(follow -> new UserSimpleResponseDto(
-                follow.getFollower().getUserId(),
+                follow.getFollower().getId(),
                 follow.getFollower().getUsername(),
-                follow.getFollower().getUserImage()
+                follow.getFollower().getUserImage(),
+                follow.getFollower().getName()
         ));
     }
 }

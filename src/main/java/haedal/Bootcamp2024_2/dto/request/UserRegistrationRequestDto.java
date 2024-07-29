@@ -8,6 +8,6 @@ public class UserRegistrationRequestDto {
     private String username;
     private String password;
     private String name;
-    private String bio;
-    private byte[] userImage;
+//    private String bio;
+//    private byte[] userImage;
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @Getter
@@ -12,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long likeId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

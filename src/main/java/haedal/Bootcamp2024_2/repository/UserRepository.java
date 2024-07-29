@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
-    Optional<User> findByUserId(Long userId);
+    Optional<User> findById(Long userId);
 
 
 //    @Query("SELECT u FROM User u JOIN FETCH u.followings WHERE u.userId = :userId")

@@ -3,6 +3,8 @@ package haedal.Bootcamp2024_2.controller;
 import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.request.LoginRequestDto;
 import haedal.Bootcamp2024_2.dto.request.UserRegistrationRequestDto;
+import haedal.Bootcamp2024_2.dto.response.UserDetailResponseDto;
+import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -18,17 +20,15 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequestDto userRegistrationRequestDto) {
+    public ResponseEntity<UserSimpleResponseDto> registerUser(@RequestBody UserRegistrationRequestDto userRegistrationRequestDto) {
         User user = new User(
                 userRegistrationRequestDto.getUsername(),
                 userRegistrationRequestDto.getPassword(),
-                userRegistrationRequestDto.getName(),
-                userRegistrationRequestDto.getUserImage(),
-                userRegistrationRequestDto.getBio()
+                userRegistrationRequestDto.getName()
         );
-        userService.save(user);
+        UserSimpleResponseDto savedUser = userService.save(user);
 
-        return ResponseEntity.ok("회원가입 성공");
+        return ResponseEntity.ok(savedUser);
     }
 
 
@@ -58,15 +58,20 @@ public class AuthController {
 
 
     @GetMapping("/me")
-    public ResponseEntity<User> me(HttpServletRequest request) {
+    public ResponseEntity<UserSimpleResponseDto> me(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("user") != null) {
-            User user = (User) session.getAttribute("user");
-            return ResponseEntity.ok(user);
-        } else {
+        if (session == null || session.getAttribute("user") == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        User currentUser = (User)session.getAttribute("user");
+
+        UserSimpleResponseDto loginedUser = new UserSimpleResponseDto(
+                currentUser.getId(),
+                currentUser.getUsername(),
+                currentUser.getUserImage(),
+                currentUser.getName()
+        );
+
+        return ResponseEntity.ok(loginedUser);
     }
-
-
 }

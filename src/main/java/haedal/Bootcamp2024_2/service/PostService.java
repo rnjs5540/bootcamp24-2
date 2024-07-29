@@ -31,14 +31,14 @@ public class PostService {
     }
 
     public Page<Post> getFollowingUsersPosts(User user, Pageable pageable) {
-        User managedUser = userRepository.findById(user.getUserId())
+        User managedUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         List<Long> followingIds = user.getFollowings().stream()
-                .map(follow -> follow.getFollowing().getUserId())
+                .map(follow -> follow.getFollowing().getId())
                 .toList();
 
-        return postRepository.findByUser_UserIdIn(followingIds, pageable);
+        return postRepository.findByUser_IdIn(followingIds, pageable);
     }
 
 
@@ -53,14 +53,15 @@ public class PostService {
 
     private PostResponseDto convertPostToDto(Post post) {
         UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
-                post.getUser().getUserId(),
+                post.getUser().getId(),
                 post.getUser().getUsername(),
-                post.getUser().getUserImage()
+                post.getUser().getUserImage(),
+                post.getUser().getName()
         );
         Long likeCount = likeRepository.countByPost(post);
 
         return new PostResponseDto(
-                post.getPostId(),
+                post.getId(),
                 userSimpleResponseDto,
                 post.getImage(),
                 post.getContext(),

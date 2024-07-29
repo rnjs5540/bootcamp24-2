@@ -35,7 +35,7 @@ public class FollowController {
 
 //        if (followService.)
 
-        followService.followUser(currentUser.getUserId(), followingId);
+        followService.followUser(currentUser.getId(), followingId);
         return ResponseEntity.ok().build();
     }
 
@@ -47,7 +47,7 @@ public class FollowController {
         }
         User currentUser = (User) session.getAttribute("user");
 
-        followService.unfollowUser(currentUser.getUserId(), followingId);
+        followService.unfollowUser(currentUser.getId(), followingId);
         return ResponseEntity.ok().build();
     }
 

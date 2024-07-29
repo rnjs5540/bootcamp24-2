@@ -2,6 +2,7 @@ package haedal.Bootcamp2024_2.service;
 
 import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.response.UserDetailResponseDto;
+import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.repository.FollowRepository;
 import haedal.Bootcamp2024_2.repository.PostRepository;
 import haedal.Bootcamp2024_2.repository.UserRepository;
@@ -24,7 +25,7 @@ public class UserService {
     private FollowRepository followRepository;
 
 
-    public void save(User user) {
+    public UserSimpleResponseDto save(User user) {
         // 중복 회원 검증
         Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser.isPresent()) {
@@ -32,20 +33,22 @@ public class UserService {
         }
 
         userRepository.save(user);
+
+        return getUserSimple(user.getId());
     }
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    public UserDetailResponseDto getUserDetail(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
+    public UserDetailResponseDto getUserDetail(Long id) {
+        User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             throw new IllegalStateException("유저가 존재하지 않습니다.");
         }
 
         return new UserDetailResponseDto(
-                userId,
+                id,
                 user.getUsername(),
                 user.getName(),
                 user.getUserImage(),
@@ -54,6 +57,20 @@ public class UserService {
                 postRepository.countByUser(user),
                 followRepository.countByFollowing(user),
                 followRepository.countByFollower(user)
+        );
+    }
+
+    public UserSimpleResponseDto getUserSimple(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            throw new IllegalStateException("유저가 존재하지 않습니다.");
+        }
+
+        return new UserSimpleResponseDto(
+                id,
+                user.getUsername(),
+                user.getUserImage(),
+                user.getName()
         );
     }
 }

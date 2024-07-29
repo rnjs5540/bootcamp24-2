@@ -44,9 +44,10 @@ public class LikeService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
         Page<Like> likes = likeRepository.findByPost(post, pageable);
         return likes.map(like -> new UserSimpleResponseDto(
-                like.getUser().getUserId(),
+                like.getUser().getId(),
                 like.getUser().getUsername(),
-                like.getUser().getUserImage()
+                like.getUser().getUserImage(),
+                like.getUser().getName()
         ));
     }
 }
