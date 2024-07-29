@@ -37,27 +37,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserSimpleResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
-        User user = userService.findByUsername(loginRequestDto.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username"));
-
-        if (!user.getPassword().equals(loginRequestDto.getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
-        }
-
-        HttpSession session = request.getSession(); // session이 존재하지 않으면 새로운 세션 생성
-        session.setAttribute("user", user);
-
-        UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimple(user.getId());
-        return ResponseEntity.ok(userSimpleResponseDto); // 쿠키에 세션아이디 담겨서 전송됨
+        UserSimpleResponseDto userSimpleResponseDto = authService.login(loginRequestDto, request);
+        return ResponseEntity.ok(userSimpleResponseDto);
     }
 
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false); // false를 전달하면, 현재 session이 존재하지 않으면 null을 반환
-        if (session != null) {
-            session.invalidate();
-        }
+        authService.logout(request);
         return ResponseEntity.ok("로그아웃 성공");
     }
 
