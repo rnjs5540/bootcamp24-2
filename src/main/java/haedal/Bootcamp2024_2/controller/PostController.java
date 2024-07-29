@@ -4,6 +4,7 @@ import haedal.Bootcamp2024_2.domain.Post;
 import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.request.PostRequestDto;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
+import haedal.Bootcamp2024_2.service.AuthService;
 import haedal.Bootcamp2024_2.service.LikeService;
 import haedal.Bootcamp2024_2.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,16 +27,13 @@ public class PostController {
     private PostService postService;
     @Autowired
     private LikeService likeService;
+    @Autowired
+    AuthService authService;
 
 
     @PostMapping
     public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) throws IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User)session.getAttribute("user");
+        User currentUser = authService.getCurrentUser(request);
 
         // 이미지 byte[]로 변경
         byte[] imageBytes = Base64.getDecoder().decode(postRequestDto.getImage());
@@ -49,11 +47,7 @@ public class PostController {
 
     @GetMapping("/following")
     public ResponseEntity<Page<Post>> getFollowingUsersPosts(HttpServletRequest request, Pageable pageable) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User) session.getAttribute("user");
+        User currentUser = authService.getCurrentUser(request);
 
         Page<Post> posts = postService.getFollowingUsersPosts(currentUser, pageable);
         return ResponseEntity.ok(posts);
@@ -61,13 +55,8 @@ public class PostController {
 
 
     @PostMapping("/{postId}/like")
-    // ResponseEntity<Void>? ResponseEntity<String>?
     public ResponseEntity<String> likePost(@PathVariable Long postId, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User)session.getAttribute("user");
+        User currentUser = authService.getCurrentUser(request);
 
         try {
             likeService.likePost(currentUser, postId);
@@ -81,12 +70,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}/like")
     public ResponseEntity<String> unlikePost(HttpServletRequest request, @PathVariable Long postId) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        User currentUser = (User) session.getAttribute("user");
+        User currentUser = authService.getCurrentUser(request);
 
         try {
             likeService.unlikePost(currentUser, postId);

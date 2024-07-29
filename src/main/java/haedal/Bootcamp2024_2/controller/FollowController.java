@@ -2,6 +2,7 @@ package haedal.Bootcamp2024_2.controller;
 
 import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
+import haedal.Bootcamp2024_2.service.AuthService;
 import haedal.Bootcamp2024_2.service.FollowService;
 import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,16 +25,12 @@ public class FollowController {
     FollowService followService;
     @Autowired
     UserService userService;
+    @Autowired
+    AuthService authService;
 
     @PostMapping("/follows/{followingId}")
     public ResponseEntity<Void> followUser(@PathVariable Long followingId, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User)session.getAttribute("user");
-
-//        if (followService.)
+        User currentUser = authService.getCurrentUser(request);
 
         followService.followUser(currentUser.getId(), followingId);
         return ResponseEntity.ok().build();
@@ -41,11 +38,7 @@ public class FollowController {
 
     @DeleteMapping("/follows/{followingId}")
     public ResponseEntity<Void> unfollowUser(@PathVariable Long followingId, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User) session.getAttribute("user");
+        User currentUser = authService.getCurrentUser(request);
 
         followService.unfollowUser(currentUser.getId(), followingId);
         return ResponseEntity.ok().build();
