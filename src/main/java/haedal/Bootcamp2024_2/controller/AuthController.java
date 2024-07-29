@@ -3,7 +3,6 @@ package haedal.Bootcamp2024_2.controller;
 import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.request.LoginRequestDto;
 import haedal.Bootcamp2024_2.dto.request.UserRegistrationRequestDto;
-import haedal.Bootcamp2024_2.dto.response.UserDetailResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,15 +32,17 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
+    public ResponseEntity<UserSimpleResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
         User user = userService.findByUsername(loginRequestDto.getUsername()).orElse(null);
 
         if (user != null && user.getPassword().equals(loginRequestDto.getPassword())) {
             HttpSession session = request.getSession(); // session이 존재하지 않으면 새로운 세션 생성
             session.setAttribute("user", user);
-            return ResponseEntity.ok("로그인 성공"); // 쿠키에 세션아이디 담겨서 전송됨
+
+            UserSimpleResponseDto loginedUser = userService.getUserSimple(user.getId());
+            return ResponseEntity.ok(loginedUser); // 쿠키에 세션아이디 담겨서 전송됨
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("username이나 password가 잘못됐습니다");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
