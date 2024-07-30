@@ -33,7 +33,7 @@ public class UserController {
     @PutMapping("/profile")
     public ResponseEntity<UserDetailResponseDto> updateUser(@RequestBody UserUpdateRequestDto userUpdateRequestDto, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
-        UserDetailResponseDto updatedUser = userService.updateUser(currentUser, userUpdateRequestDto);
+        UserDetailResponseDto updatedUser = userService.updateUser(currentUser.getId(), userUpdateRequestDto);
         return ResponseEntity.ok(updatedUser);
     }
 

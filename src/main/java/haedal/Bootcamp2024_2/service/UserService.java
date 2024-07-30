@@ -39,7 +39,10 @@ public class UserService {
     }
 
 
-    public UserDetailResponseDto updateUser(User user, UserUpdateRequestDto userUpdateRequestDto) {
+    public UserDetailResponseDto updateUser(Long userId, UserUpdateRequestDto userUpdateRequestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+
         if (userUpdateRequestDto.getUsername() != null) {
             user.setUsername(userUpdateRequestDto.getUsername());
         }
@@ -66,17 +69,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    public UserDetailResponseDto getUserDetail(Long id) {
-        User user = userRepository.findById(id)
+    public UserDetailResponseDto getUserDetail(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         return new UserDetailResponseDto(
-                id,
+                userId,
                 user.getUsername(),
                 user.getName(),
                 user.getUserImage(),

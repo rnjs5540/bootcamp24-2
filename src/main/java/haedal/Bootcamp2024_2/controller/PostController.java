@@ -49,7 +49,7 @@ public class PostController {
     public ResponseEntity<Page<Post>> getFollowingUsersPosts(HttpServletRequest request, Pageable pageable) {
         User currentUser = authService.getCurrentUser(request);
 
-        Page<Post> posts = postService.getFollowingUsersPosts(currentUser, pageable);
+        Page<Post> posts = postService.getFollowingUsersPosts(currentUser.getId(), pageable);
         return ResponseEntity.ok(posts);
     }
 
@@ -58,26 +58,17 @@ public class PostController {
     public ResponseEntity<String> likePost(@PathVariable Long postId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        try {
-            likeService.likePost(currentUser, postId);
-            return ResponseEntity.ok().build();
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 이미 좋아요를 누른 경우 409 Conflict 반환
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); // 게시물을 찾을 수 없는 경우 404 Not Found 반환
-        }
+        likeService.likePost(currentUser.getId(), postId);
+        return ResponseEntity.ok().build();
+
     }
 
     @DeleteMapping("/{postId}/like")
     public ResponseEntity<String> unlikePost(HttpServletRequest request, @PathVariable Long postId) {
         User currentUser = authService.getCurrentUser(request);
 
-        try {
-            likeService.unlikePost(currentUser, postId);
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("좋아요가 존재하지 않습니다."); // 좋아요가 존재하지 않는 경우 404 Not Found 반환
-        }
+        likeService.unlikePost(currentUser.getId(), postId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{postId}/like")

@@ -30,8 +30,8 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public Page<Post> getFollowingUsersPosts(User user, Pageable pageable) {
-       userRepository.findById(user.getId())
+    public Page<Post> getFollowingUsersPosts(Long userId, Pageable pageable) {
+       User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         List<Long> followingIds = user.getFollowings().stream()

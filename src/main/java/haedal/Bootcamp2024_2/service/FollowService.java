@@ -45,8 +45,8 @@ public class FollowService {
     }
 
 
-    public Page<UserSimpleResponseDto> getFollowingUsers(Long id, Pageable pageable) {
-        User user = userRepository.findById(id)
+    public Page<UserSimpleResponseDto> getFollowingUsers(Long userId, Pageable pageable) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         Page<Follow> followings = followRepository.findByFollower(user, pageable);
@@ -59,8 +59,8 @@ public class FollowService {
     }
 
 
-    public Page<UserSimpleResponseDto> getFollowerUsers(Long id, Pageable pageable) {
-        User user = userRepository.findById(id)
+    public Page<UserSimpleResponseDto> getFollowerUsers(Long userId, Pageable pageable) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         Page<Follow> followers = followRepository.findByFollowing(user, pageable);
