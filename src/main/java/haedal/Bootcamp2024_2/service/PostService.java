@@ -32,7 +32,7 @@ public class PostService {
 
     public Page<Post> getFollowingUsersPosts(Long userId, Pageable pageable) {
        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         List<Long> followingIds = user.getFollowings().stream()
                 .map(follow -> follow.getFollowing().getId())
@@ -44,7 +44,7 @@ public class PostService {
 
     public Page<PostResponseDto> getPostsByUser(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         Page<Post> posts = postRepository.findByUser(user, pageable);
 

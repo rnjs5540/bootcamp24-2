@@ -41,7 +41,7 @@ public class UserService {
 
     public UserDetailResponseDto updateUser(Long userId, UserUpdateRequestDto userUpdateRequestDto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         if (userUpdateRequestDto.getUsername() != null) {
             user.setUsername(userUpdateRequestDto.getUsername());
@@ -63,7 +63,7 @@ public class UserService {
 
     public void updateUserImage(Long userId, byte[] userImage) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         user.setUserImage(userImage);
         userRepository.save(user);
@@ -71,7 +71,7 @@ public class UserService {
 
     public UserDetailResponseDto getUserDetail(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         return new UserDetailResponseDto(
                 userId,
@@ -86,14 +86,12 @@ public class UserService {
         );
     }
 
-    public UserSimpleResponseDto getUserSimple(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new IllegalStateException("유저가 존재하지 않습니다.");
-        }
+    public UserSimpleResponseDto getUserSimple(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         return new UserSimpleResponseDto(
-                id,
+                userId,
                 user.getUsername(),
                 user.getUserImage(),
                 user.getName()

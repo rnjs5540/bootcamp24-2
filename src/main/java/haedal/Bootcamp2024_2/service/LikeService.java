@@ -24,9 +24,9 @@ public class LikeService {
 
     public void likePost(Long userId, Long postId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
 
         if (likeRepository.existsByUserAndPost(user, post)) {
             throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
@@ -38,9 +38,9 @@ public class LikeService {
 
     public void unlikePost(Long userId, Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         Like like = likeRepository.findByUserAndPost(user, post)
                 .orElseThrow(() -> new IllegalArgumentException("좋아요가 존재하지 않습니다."));
@@ -50,7 +50,7 @@ public class LikeService {
 
 
     public Page<UserSimpleResponseDto> getUsersWhoLikedPost(Long postId, Pageable pageable) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Invalid post ID"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         Page<Like> likes = likeRepository.findByPost(post, pageable);
         return likes.map(like -> new UserSimpleResponseDto(
                 like.getUser().getId(),

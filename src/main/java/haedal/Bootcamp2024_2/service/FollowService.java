@@ -19,12 +19,12 @@ public class FollowService {
 
     public void followUser(Long followerId, Long followingId) {
         User follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid follower ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로워 회원입니다."));
         User following = userRepository.findById(followingId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid following ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로잉 회원입니다."));
 
         if (followerId.equals(followingId)) {
-            throw new IllegalArgumentException("Follower and Following are the same");
+            throw new IllegalArgumentException("팔로워 회원과 팔로잉 회원이 같습니다.");
         }
 
         Follow follow = new Follow(follower, following);
@@ -34,12 +34,12 @@ public class FollowService {
 
     public void unfollowUser(Long followerId, Long followingId) {
         User follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid follower ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로워 회원입니다."));
         User following = userRepository.findById(followingId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid following ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로잉 회원입니다."));
 
         Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new IllegalArgumentException("Follow relationship not found"));
+                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
 
         followRepository.delete(follow);
     }
@@ -47,7 +47,7 @@ public class FollowService {
 
     public Page<UserSimpleResponseDto> getFollowingUsers(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         Page<Follow> followings = followRepository.findByFollower(user, pageable);
         return followings.map(follow -> new UserSimpleResponseDto(
@@ -61,7 +61,7 @@ public class FollowService {
 
     public Page<UserSimpleResponseDto> getFollowerUsers(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         Page<Follow> followers = followRepository.findByFollowing(user, pageable);
         return followers.map(follow -> new UserSimpleResponseDto(
