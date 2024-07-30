@@ -1,6 +1,7 @@
 package haedal.Bootcamp2024_2.service;
 
 import haedal.Bootcamp2024_2.domain.User;
+import haedal.Bootcamp2024_2.dto.request.UserUpdateRequestDto;
 import haedal.Bootcamp2024_2.dto.response.UserDetailResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.repository.FollowRepository;
@@ -36,6 +37,35 @@ public class UserService {
 
         return getUserSimple(user.getId());
     }
+
+
+    public UserDetailResponseDto updateUser(User user, UserUpdateRequestDto userUpdateRequestDto) {
+        if (userUpdateRequestDto.getUsername() != null) {
+            user.setUsername(userUpdateRequestDto.getUsername());
+        }
+        if (userUpdateRequestDto.getPassword() != null) {
+            user.setPassword(userUpdateRequestDto.getPassword());
+        }
+        if (userUpdateRequestDto.getName() != null) {
+            user.setName(userUpdateRequestDto.getName());
+        }
+        if (userUpdateRequestDto.getBio() != null) {
+            user.setBio(userUpdateRequestDto.getBio());
+        }
+
+        userRepository.save(user);
+
+        return getUserDetail(user.getId());
+    }
+
+    public void updateUserImage(Long userId, byte[] userImage) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+
+        user.setUserImage(userImage);
+        userRepository.save(user);
+    }
+
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);

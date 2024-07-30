@@ -16,19 +16,24 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Setter
     private String username;
 
     @Column(nullable = false)
+    @Setter
     private String password;
 
     @Column(nullable = false)
+    @Setter
     private String name;
 
     @Lob  // Large OBject의 줄임말. blob: binary lob
-    @Column(name = "profile_picture")
+    @Column(name = "user_Image")
+    @Setter
     private byte[] userImage;
 
     @Column(length = 500)
+    @Setter
     private String bio;
 
     @Column(name = "joined_at", nullable = false)
