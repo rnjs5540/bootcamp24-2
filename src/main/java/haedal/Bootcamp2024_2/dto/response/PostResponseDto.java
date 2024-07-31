@@ -13,5 +13,6 @@ public class PostResponseDto {
     private byte[] image;
     private String context;
     private Long likeCount;
-    private LocalDateTime createdAt;
+    private boolean liked;
+    private String createdAt;
 }

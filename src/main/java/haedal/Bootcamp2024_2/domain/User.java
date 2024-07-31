@@ -27,10 +27,9 @@ public class User {
     @Setter
     private String name;
 
-    @Lob  // Large OBject의 줄임말. blob: binary lob
     @Column(name = "user_Image")
     @Setter
-    private byte[] userImage;
+    private String userImage;
 
     @Column(length = 500)
     @Setter

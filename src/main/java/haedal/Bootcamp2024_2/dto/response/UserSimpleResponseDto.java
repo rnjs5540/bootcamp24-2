@@ -8,6 +8,6 @@ import lombok.Getter;
 public class UserSimpleResponseDto {
     private Long id;
     private String username;
-    private byte[] userImage;
+    private String userImage;
     private String name;
 }

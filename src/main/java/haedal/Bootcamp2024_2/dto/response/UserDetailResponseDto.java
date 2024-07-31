@@ -11,9 +11,9 @@ public class UserDetailResponseDto {
     private Long id;
     private String username;
     private String name;
-    private byte[] userImage;
+    private String userImage;
     private String bio;
-    private LocalDateTime joinedAt;
+    private String joinedAt;
     private Long postCount;
     private Long followerCount;
     private Long followingCount;

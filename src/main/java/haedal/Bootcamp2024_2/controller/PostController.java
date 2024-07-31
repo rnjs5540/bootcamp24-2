@@ -33,6 +33,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) throws IOException {
+        // 이미지 보내고, 포스트아이디 리턴하면 내용 보내기
         User currentUser = authService.getCurrentUser(request);
 
         // 이미지 byte[]로 변경

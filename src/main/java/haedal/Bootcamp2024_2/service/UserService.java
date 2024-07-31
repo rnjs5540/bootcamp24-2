@@ -8,11 +8,14 @@ import haedal.Bootcamp2024_2.repository.FollowRepository;
 import haedal.Bootcamp2024_2.repository.PostRepository;
 import haedal.Bootcamp2024_2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -61,11 +64,28 @@ public class UserService {
         return getUserDetail(user.getId());
     }
 
-    public void updateUserImage(Long userId, byte[] userImage) {
+    public void updateImage(Long userId, MultipartFile image) throws IOException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        user.setUserImage(userImage);
+        String uploadDir = "uploads"; // 상대 경로로 저장할 폴더
+        Path uploadPath = Paths.get(uploadDir);
+        System.out.println("aaaaaaaaaaaa");
+        if (!uploadPath.toFile().exists()) {
+            uploadPath.toFile().mkdirs();
+        }
+        System.out.println("bbbbbbbbbbbb");
+
+        // 현재 시간을 기준으로 고유한 이미지 이름 생성
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
+        String imageName = timestamp + image.getOriginalFilename();
+        System.out.println("cccccccccccc");
+        Path filePath = uploadPath.resolve(imageName);
+        System.out.println("eeeeeeeeeeeeeeee");
+        image.transferTo(filePath.toFile());
+        System.out.println("dddddddddddd");
+        // 파일 경로를 문자열로 설정
+        user.setUserImage(filePath.toString());
         userRepository.save(user);
     }
 
@@ -73,13 +93,15 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
+        String joinedAt = user.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+
         return new UserDetailResponseDto(
                 userId,
                 user.getUsername(),
                 user.getName(),
                 user.getUserImage(),
                 user.getBio(),
-                user.getJoinedAt(),
+                joinedAt,
                 postRepository.countByUser(user),
                 followRepository.countByFollowing(user),
                 followRepository.countByFollower(user)

@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -52,13 +54,16 @@ public class PostService {
     }
 
     private PostResponseDto convertPostToDto(Post post) {
+        User user = post.getUser();
         UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
-                post.getUser().getId(),
-                post.getUser().getUsername(),
-                post.getUser().getUserImage(),
-                post.getUser().getName()
+                user.getId(),
+                user.getUsername(),
+                user.getUserImage(),
+                user.getName()
         );
+
         Long likeCount = likeRepository.countByPost(post);
+        String createdAt = post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
 
         return new PostResponseDto(
                 post.getId(),
@@ -66,7 +71,8 @@ public class PostService {
                 post.getImage(),
                 post.getContext(),
                 likeCount,
-                post.getCreatedAt()
+                likeRepository.existsByUserAndPost(user, post),
+                createdAt
         );
     }
 }
