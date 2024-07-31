@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -64,30 +65,30 @@ public class UserService {
         return getUserDetail(user.getId());
     }
 
-    public void updateImage(Long userId, MultipartFile image) throws IOException {
+
+    public String updateImage(Long userId, MultipartFile image) throws IOException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-        String uploadDir = "uploads"; // 상대 경로로 저장할 폴더
+        String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/userImages";
         Path uploadPath = Paths.get(uploadDir);
-        System.out.println("aaaaaaaaaaaa");
         if (!uploadPath.toFile().exists()) {
             uploadPath.toFile().mkdirs();
         }
-        System.out.println("bbbbbbbbbbbb");
 
         // 현재 시간을 기준으로 고유한 이미지 이름 생성
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
-        String imageName = timestamp + image.getOriginalFilename();
-        System.out.println("cccccccccccc");
+        String imageName = timestamp + "_" + image.getOriginalFilename();
         Path filePath = uploadPath.resolve(imageName);
-        System.out.println("eeeeeeeeeeeeeeee");
+
         image.transferTo(filePath.toFile());
-        System.out.println("dddddddddddd");
-        // 파일 경로를 문자열로 설정
-        user.setUserImage(filePath.toString());
+
+        // 파일 이름만 설정
+        user.setUserImage(imageName);
         userRepository.save(user);
+
+        return imageName;
     }
+
 
     public UserDetailResponseDto getUserDetail(Long userId) {
         User user = userRepository.findById(userId)

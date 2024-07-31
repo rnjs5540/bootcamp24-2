@@ -18,7 +18,10 @@ public class AuthService {
 
 
     public User getCurrentUser(HttpServletRequest request) {
+        System.out.println();
         HttpSession session = request.getSession(false);
+        System.out.println("session = " + session);
+        System.out.println("session.getAttribute(\"user\") = " + session.getAttribute("user"));
         if (session == null || session.getAttribute("user") == null) {
             throw new IllegalStateException("로그인되지 않았습니다.");  // unAuthorized
         }

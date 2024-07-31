@@ -32,7 +32,7 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public Page<Post> getFollowingUsersPosts(Long userId, Pageable pageable) {
+    public Page<PostResponseDto> getFollowingUsersPosts(Long userId, Pageable pageable) {
        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
@@ -40,7 +40,8 @@ public class PostService {
                 .map(follow -> follow.getFollowing().getId())
                 .toList();
 
-        return postRepository.findByUser_IdIn(followingIds, pageable);
+        Page<Post> posts = postRepository.findByUser_IdIn(followingIds, pageable);
+        return posts.map(post -> convertPostToDto(post));
     }
 
 
