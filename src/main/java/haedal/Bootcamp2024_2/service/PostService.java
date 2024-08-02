@@ -53,6 +53,7 @@ public class PostService {
         List<Post> posts = postRepository.findByUser(targetUser);
         posts.sort((p1, p2) ->
                 p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+
         return posts.stream().map(post -> convertPostToDto(targetUser, post)).toList();
     }
 
