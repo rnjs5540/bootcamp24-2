@@ -34,13 +34,21 @@ public class UserService {
 
         userRepository.save(user);
 
-        return getUserSimple(user.getId());
+        return convertUserToSimpleDto(user, user);
     }
 
     public List<UserSimpleResponseDto> getAllUsers(User currentUser) {
         List<User> users = userRepository.findAll();
         users.remove(currentUser);
-        return users.stream().map(user -> getUserSimple(user.getId())).toList();
+        return users.stream().map(user -> convertUserToSimpleDto(currentUser, user)).toList();
+    }
+
+    public UserDetailResponseDto getUserDetail(Long currentUserId, Long userId) {
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        return convertUserToDetailDto(currentUser, user);
     }
 
     public UserDetailResponseDto updateUser(Long userId, UserUpdateRequestDto userUpdateRequestDto) {
@@ -62,39 +70,36 @@ public class UserService {
 
         userRepository.save(user);
 
-        return getUserDetail(user.getId());
+        return convertUserToDetailDto(user, user);
     }
 
 
-    public UserDetailResponseDto getUserDetail(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public UserDetailResponseDto convertUserToDetailDto(User currentUser, User targetUser) {
+        System.out.println("Current User ID: " + currentUser.getId());
+        System.out.println("Target User ID: " + targetUser.getId());
 
-        String joinedAt = user.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
-
-        return new UserDetailResponseDto(
-                userId,
-                user.getUsername(),
-                user.getName(),
-                user.getImageUrl(),
-                user.getBio(),
-                joinedAt,
-                postRepository.countByUser(user),
-                followRepository.countByFollowing(user),
-                followRepository.countByFollower(user)
-        );
+        return UserDetailResponseDto.builder()
+                .id(targetUser.getId())
+                .username(targetUser.getUsername())
+                .name(targetUser.getName())
+                .imageUrl(targetUser.getImageUrl())
+                .bio(targetUser.getBio())
+                .joinedAt(targetUser.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
+                .postCount(postRepository.countByUser(targetUser))
+                .followerCount(followRepository.countByFollower(targetUser))
+                .followingCount(followRepository.countByFollowing(targetUser))
+                .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
+                .build();
     }
 
-    public UserSimpleResponseDto getUserSimple(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-        return new UserSimpleResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getImageUrl(),
-                user.getName()
-        );
+    public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
+        return UserSimpleResponseDto.builder()
+                .id(targetUser.getId())
+                .username(targetUser.getUsername())
+                .name(targetUser.getName())
+                .imageUrl(targetUser.getImageUrl())
+                .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
+                .build();
     }
 }
 

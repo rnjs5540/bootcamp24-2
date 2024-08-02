@@ -83,8 +83,10 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}/like")
-    public ResponseEntity<List<UserSimpleResponseDto>> getUsersWhoLikedPost(@PathVariable Long postId) {
-        List<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(postId);
+    public ResponseEntity<List<UserSimpleResponseDto>> getUsersWhoLikedPost(@PathVariable Long postId, HttpServletRequest request) {
+        User currentUser = authService.getCurrentUser(request);
+
+        List<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(currentUser.getId(), postId);
         return ResponseEntity.ok(usersWhoLikedPost);
     }
 }

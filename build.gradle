@@ -24,9 +24,13 @@ dependencies {
 	implementation 'org.projectlombok:lombok:1.18.34'
 	annotationProcessor 'org.projectlombok:lombok:1.18.34'
 	runtimeOnly 'com.h2database:h2'
+
+	// 테스트
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.projectlombok:lombok:1.18.34'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	testImplementation 'com.h2database:h2' // H2 Database for testing
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 

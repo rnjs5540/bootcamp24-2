@@ -20,8 +20,6 @@ public class AuthService {
     public User getCurrentUser(HttpServletRequest request) {
         System.out.println();
         HttpSession session = request.getSession(false);
-        System.out.println("session = " + session);
-        System.out.println("session.getAttribute(\"user\") = " + session.getAttribute("user"));
         if (session == null || session.getAttribute("user") == null) {
             throw new IllegalStateException("로그인되지 않았습니다.");  // unAuthorized
         }
@@ -39,7 +37,7 @@ public class AuthService {
         HttpSession session = request.getSession(); // session이 존재하지 않으면 새로운 세션 생성
         session.setAttribute("user", user);
 
-        return userService.getUserSimple(user.getId());
+        return userService.convertUserToSimpleDto(user, user);
     }
 
     public void logout(HttpServletRequest request) {

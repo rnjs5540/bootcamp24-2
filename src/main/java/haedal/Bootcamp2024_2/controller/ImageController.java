@@ -61,10 +61,4 @@ public class ImageController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-
-//    @PostMapping("/posts/image")
-//    public ResponseEntity<String> createPostImage(@RequestParam("image") MultipartFile image, HttpServletRequest request) throws IOException {
-//
-//    }
 }

@@ -22,6 +22,8 @@ public class PostService {
     private UserRepository userRepository;
     @Autowired
     private LikeRepository likeRepository;
+    @Autowired
+    private UserService userService;
 
 
     public void savePost(Post post){
@@ -48,6 +50,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         List<Post> posts = postRepository.findByUser(user);
+        System.out.println(posts.toString());
 
         return posts.stream().map(post -> convertPostToDto(user, post)).toList();
     }
@@ -55,21 +58,16 @@ public class PostService {
 
     private PostResponseDto convertPostToDto(User currentUser, Post post) {
         User author = post.getUser();
-        UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
-                author.getId(),
-                author.getUsername(),
-                author.getImageUrl(),
-                author.getName()
-        );
+        UserSimpleResponseDto userSimpleResponseDto = userService.convertUserToSimpleDto(currentUser, author);
 
-        return new PostResponseDto(
-                post.getId(),
-                userSimpleResponseDto,
-                post.getImageUrl(),
-                post.getContext(),
-                likeRepository.countByPost(post),
-                likeRepository.existsByUserAndPost(currentUser, post),
-                post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))
-        );
+        return PostResponseDto.builder()
+                .id(post.getId())
+                .user(userSimpleResponseDto)
+                .imageUrl(post.getImageUrl())
+                .context(post.getContext())
+                .likeCount(likeRepository.countByPost(post))
+                .islike(likeRepository.existsByUserAndPost(currentUser, post))
+                .createdAt(post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
+                .build();
     }
 }

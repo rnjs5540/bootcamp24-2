@@ -18,6 +18,8 @@ public class FollowService {
     private FollowRepository followRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
     public void followUser(Long followerId, Long followingId) {
         User follower = userRepository.findById(followerId)
@@ -26,7 +28,10 @@ public class FollowService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로잉 회원입니다."));
 
         if (followerId.equals(followingId)) {
-            throw new IllegalArgumentException("팔로워 회원과 팔로잉 회원이 같습니다.");
+            throw new IllegalArgumentException("자기 자신을 팔로우 할 수 없습니다.");
+        }
+        if (followRepository.existsByFollowerAndFollowing(follower, following)) {
+            throw new IllegalStateException("이미 팔로우중입니다.");
         }
 
         Follow follow = new Follow(follower, following);
@@ -47,30 +52,28 @@ public class FollowService {
     }
 
 
-    public List<UserSimpleResponseDto> getFollowingUsers(Long userId) {
-        User user = userRepository.findById(userId)
+    public List<UserSimpleResponseDto> getFollowingUsers(Long currentUserId, Long targetUserId) {
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        List<Follow> followings = followRepository.findByFollower(user);
-        return followings.stream().map(follow -> new UserSimpleResponseDto(
-                follow.getFollowing().getId(),
-                follow.getFollowing().getUsername(),
-                follow.getFollowing().getImageUrl(),
-                follow.getFollowing().getName()
-        )).toList();
+        List<Follow> follows = followRepository.findByFollower(targetUser);
+        return follows.stream()
+                .map(follow -> userService.convertUserToSimpleDto(currentUser, follow.getFollowing()))
+                .toList();
     }
 
 
-    public List<UserSimpleResponseDto> getFollowerUsers(Long userId) {
-        User user = userRepository.findById(userId)
+    public List<UserSimpleResponseDto> getFollowerUsers(Long currentUserId, Long targetUserId) {
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        List<Follow> followers = followRepository.findByFollowing(user);
-        return followers.stream().map(follow -> new UserSimpleResponseDto(
-                follow.getFollowing().getId(),
-                follow.getFollowing().getUsername(),
-                follow.getFollowing().getImageUrl(),
-                follow.getFollowing().getName()
-        )).toList();
+        List<Follow> follows = followRepository.findByFollowing(targetUser);
+        return follows.stream()
+                .map(follow -> userService.convertUserToSimpleDto(currentUser, follow.getFollower()))
+                .toList();
     }
 }

@@ -23,6 +23,8 @@ public class LikeService {
     private PostRepository postRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
     public void likePost(Long userId, Long postId) {
         User user = userRepository.findById(userId)
@@ -51,14 +53,15 @@ public class LikeService {
     }
 
 
-    public List<UserSimpleResponseDto> getUsersWhoLikedPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public List<UserSimpleResponseDto> getUsersWhoLikedPost(Long currentUserId, Long postId) {
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
+
         List<Like> likes = likeRepository.findByPost(post);
-        return likes.stream().map(like -> new UserSimpleResponseDto(
-                like.getUser().getId(),
-                like.getUser().getUsername(),
-                like.getUser().getImageUrl(),
-                like.getUser().getName()
-        )).toList();
+        return likes.stream()
+                .map(like -> userService.convertUserToSimpleDto(currentUser, like.getUser()))
+                .toList();
     }
 }

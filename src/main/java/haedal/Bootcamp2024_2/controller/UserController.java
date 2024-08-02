@@ -39,13 +39,16 @@ public class UserController {
     @PutMapping("/users/profile")
     public ResponseEntity<UserDetailResponseDto> updateUser(@RequestBody UserUpdateRequestDto userUpdateRequestDto, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
-        UserDetailResponseDto updatedUser = userService.updateUser(currentUser.getId(), userUpdateRequestDto);
-        return ResponseEntity.ok(updatedUser);
+        UserDetailResponseDto updated = userService.updateUser(currentUser.getId(), userUpdateRequestDto);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/users/{userId}/profile")
-    public ResponseEntity<UserDetailResponseDto> getUserDetail(@PathVariable Long userId) {
-        UserDetailResponseDto userDetailResponseDto = userService.getUserDetail(userId);
+    public ResponseEntity<UserDetailResponseDto> getUserProfile(@PathVariable Long userId, HttpServletRequest request) {
+        User currentUser = authService.getCurrentUser(request);
+
+        UserDetailResponseDto userDetailResponseDto = userService.getUserDetail(currentUser.getId(), userId);
+
         return ResponseEntity.ok(userDetailResponseDto);
     }
 

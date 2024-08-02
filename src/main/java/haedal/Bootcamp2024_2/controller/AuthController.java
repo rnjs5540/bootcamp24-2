@@ -50,7 +50,7 @@ public class AuthController {
     public ResponseEntity<UserSimpleResponseDto> me(HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimple(currentUser.getId());
+        UserSimpleResponseDto userSimpleResponseDto = userService.convertUserToSimpleDto(currentUser, currentUser);
         return ResponseEntity.ok(userSimpleResponseDto);
     }
 }
