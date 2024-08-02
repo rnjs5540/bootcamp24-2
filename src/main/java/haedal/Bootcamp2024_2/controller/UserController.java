@@ -52,9 +52,21 @@ public class UserController {
         return ResponseEntity.ok(userDetailResponseDto);
     }
 
+    // 검색할때
+    @GetMapping("/users/username/{username}/profile")
+    public ResponseEntity<UserDetailResponseDto> getUserProfileByUsername(@PathVariable String username, HttpServletRequest request) {
+        User currentUser = authService.getCurrentUser(request);
+
+        UserDetailResponseDto userDetailResponseDto = userService.getUserDetailByUsername(currentUser.getId(), username);
+
+        return ResponseEntity.ok(userDetailResponseDto);
+    }
+
+
     @GetMapping("/users/{userId}/posts")
     public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
         List<PostResponseDto> posts = postService.getPostsByUser(userId);
         return ResponseEntity.ok(posts);
     }
+
 }

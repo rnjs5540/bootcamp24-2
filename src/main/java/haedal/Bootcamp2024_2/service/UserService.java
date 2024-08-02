@@ -43,12 +43,21 @@ public class UserService {
         return users.stream().map(user -> convertUserToSimpleDto(currentUser, user)).toList();
     }
 
-    public UserDetailResponseDto getUserDetail(Long currentUserId, Long userId) {
+    public UserDetailResponseDto getUserDetail(Long currentUserId, Long targetUserId) {
         User currentUser = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        User user = userRepository.findById(userId)
+        User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        return convertUserToDetailDto(currentUser, user);
+        return convertUserToDetailDto(currentUser, targetUser);
+    }
+
+    public UserDetailResponseDto getUserDetailByUsername(Long currentUserId, String username) {
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        User targetUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        return convertUserToDetailDto(currentUser, targetUser);
     }
 
     public UserDetailResponseDto updateUser(Long userId, UserUpdateRequestDto userUpdateRequestDto) {
@@ -101,5 +110,7 @@ public class UserService {
                 .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
                 .build();
     }
+
+
 }
 
