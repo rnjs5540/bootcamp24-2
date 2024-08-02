@@ -4,7 +4,6 @@ import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.service.AuthService;
 import haedal.Bootcamp2024_2.service.FollowService;
-import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

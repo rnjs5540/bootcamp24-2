@@ -58,7 +58,7 @@ public class PostController {
 
 
     @PostMapping("/posts/{postId}/like")
-    public ResponseEntity<String> likePost(@PathVariable Long postId, HttpServletRequest request) {
+    public ResponseEntity<Void> likePost(@PathVariable Long postId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
         likeService.likePost(currentUser, postId);
@@ -67,7 +67,7 @@ public class PostController {
     }
 
     @DeleteMapping("/posts/{postId}/like")
-    public ResponseEntity<String> unlikePost(HttpServletRequest request, @PathVariable Long postId) {
+    public ResponseEntity<Void> unlikePost(HttpServletRequest request, @PathVariable Long postId) {
         User currentUser = authService.getCurrentUser(request);
 
         likeService.unlikePost(currentUser, postId);
