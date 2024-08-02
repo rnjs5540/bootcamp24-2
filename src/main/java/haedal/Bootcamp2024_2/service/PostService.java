@@ -30,29 +30,25 @@ public class PostService {
         Post saved = postRepository.save(post);
     }
 
-    public List<PostResponseDto> getFollowingUsersPosts(Long userId) {
-       User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-        List<Long> followingIds = user.getFollowings().stream()
+    public List<PostResponseDto> getFollowingUsersPosts(User currentUser) {
+        List<Long> followingIds = currentUser.getFollowings().stream()
                 .map(follow -> follow.getFollowing().getId())
                 .toList();
 
         List<Post> posts = postRepository.findByUser_IdIn(followingIds);
-        posts.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+        posts.sort((p1, p2) ->
+                p2.getCreatedAt().compareTo(p1.getCreatedAt()));
 
-        return posts.stream().map(post -> convertPostToDto(user, post)).toList();
+        return posts.stream().map(post -> convertPostToDto(currentUser, post)).toList();
     }
 
 
-    public List<PostResponseDto> getPostsByUser(Long userId) {
-        User user = userRepository.findById(userId)
+    public List<PostResponseDto> getPostsByUser(Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        List<Post> posts = postRepository.findByUser(user);
-        System.out.println(posts.toString());
-
-        return posts.stream().map(post -> convertPostToDto(user, post)).toList();
+        List<Post> posts = postRepository.findByUser(targetUser);
+        return posts.stream().map(post -> convertPostToDto(targetUser, post)).toList();
     }
 
 

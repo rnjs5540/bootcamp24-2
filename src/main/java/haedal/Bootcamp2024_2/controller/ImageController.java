@@ -38,7 +38,7 @@ public class ImageController {
     public ResponseEntity<String> updateUserImage(@RequestParam("image") MultipartFile image, HttpServletRequest request) throws IOException {
         User currentUser = authService.getCurrentUser(request);
 
-        String savedImageName = imageService.updateUserImage(currentUser.getId(), image);
+        String savedImageName = imageService.updateUserImage(currentUser, image);
         return ResponseEntity.ok(savedImageName);
     }
 

@@ -34,7 +34,7 @@ public class FollowController {
     public ResponseEntity<Void> followUser(@PathVariable Long followingId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        followService.followUser(currentUser.getId(), followingId);
+        followService.followUser(currentUser, followingId);
         return ResponseEntity.ok().build();
     }
 
@@ -42,7 +42,7 @@ public class FollowController {
     public ResponseEntity<Void> unfollowUser(@PathVariable Long followingId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        followService.unfollowUser(currentUser.getId(), followingId);
+        followService.unfollowUser(currentUser, followingId);
         return ResponseEntity.ok().build();
     }
 
@@ -50,14 +50,14 @@ public class FollowController {
     @GetMapping("/follows/{userId}/following")
     public ResponseEntity<List<UserSimpleResponseDto>> getFollowingUsers(@PathVariable Long userId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
-        List<UserSimpleResponseDto> followingUsers = followService.getFollowingUsers(currentUser.getId(), userId);
+        List<UserSimpleResponseDto> followingUsers = followService.getFollowingUsers(currentUser, userId);
         return ResponseEntity.ok(followingUsers);
     }
 
     @GetMapping("/follows/{userId}/follower")
     public ResponseEntity<List<UserSimpleResponseDto>> getFollowerUsers(@PathVariable Long userId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
-        List<UserSimpleResponseDto> followerUsers = followService.getFollowerUsers(currentUser.getId(), userId);
+        List<UserSimpleResponseDto> followerUsers = followService.getFollowerUsers(currentUser, userId);
         return ResponseEntity.ok(followerUsers);
     }
 }

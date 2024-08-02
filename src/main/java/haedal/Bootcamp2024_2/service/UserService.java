@@ -25,16 +25,16 @@ public class UserService {
     private FollowRepository followRepository;
 
 
-    public UserSimpleResponseDto saveUser(User user) {
+    public UserSimpleResponseDto saveUser(User newUser) {
         // 중복 회원 검증
-        Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
+        Optional<User> existingUser = userRepository.findByUsername(newUser.getUsername());
         if (existingUser.isPresent()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
 
-        userRepository.save(user);
+        userRepository.save(newUser);
 
-        return convertUserToSimpleDto(user, user);
+        return convertUserToSimpleDto(newUser, newUser);
     }
 
     public List<UserSimpleResponseDto> getAllUsers(User currentUser) {
@@ -43,50 +43,51 @@ public class UserService {
         return users.stream().map(user -> convertUserToSimpleDto(currentUser, user)).toList();
     }
 
-    public UserDetailResponseDto getUserDetail(Long currentUserId, Long targetUserId) {
-        User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        User targetUser = userRepository.findById(targetUserId)
+    public UserDetailResponseDto getUserDetail(User currentUser, Long targetUserId) {
+       User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         return convertUserToDetailDto(currentUser, targetUser);
     }
 
-    public UserDetailResponseDto getUserDetailByUsername(Long currentUserId, String username) {
-        User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public UserDetailResponseDto getUserDetailByUsername(User currentUser, String username) {
         User targetUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         return convertUserToDetailDto(currentUser, targetUser);
     }
 
-    public UserDetailResponseDto updateUser(Long userId, UserUpdateRequestDto userUpdateRequestDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
+    public UserDetailResponseDto updateUser(User currentUser, UserUpdateRequestDto userUpdateRequestDto) {
         if (userUpdateRequestDto.getUsername() != null) {
-            user.setUsername(userUpdateRequestDto.getUsername());
+            currentUser.setUsername(userUpdateRequestDto.getUsername());
         }
         if (userUpdateRequestDto.getPassword() != null) {
-            user.setPassword(userUpdateRequestDto.getPassword());
+            currentUser.setPassword(userUpdateRequestDto.getPassword());
         }
         if (userUpdateRequestDto.getName() != null) {
-            user.setName(userUpdateRequestDto.getName());
+            currentUser.setName(userUpdateRequestDto.getName());
         }
         if (userUpdateRequestDto.getBio() != null) {
-            user.setBio(userUpdateRequestDto.getBio());
+            currentUser.setBio(userUpdateRequestDto.getBio());
         }
 
-        userRepository.save(user);
+        userRepository.save(currentUser);
 
-        return convertUserToDetailDto(user, user);
+        return convertUserToDetailDto(currentUser, currentUser);
     }
 
 
-    public UserDetailResponseDto convertUserToDetailDto(User currentUser, User targetUser) {
-        System.out.println("Current User ID: " + currentUser.getId());
-        System.out.println("Target User ID: " + targetUser.getId());
 
+    public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
+        return UserSimpleResponseDto.builder()
+                .id(targetUser.getId())
+                .username(targetUser.getUsername())
+                .name(targetUser.getName())
+                .imageUrl(targetUser.getImageUrl())
+                .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
+                .build();
+    }
+
+    public UserDetailResponseDto convertUserToDetailDto(User currentUser, User targetUser) {
         return UserDetailResponseDto.builder()
                 .id(targetUser.getId())
                 .username(targetUser.getUsername())
@@ -100,17 +101,5 @@ public class UserService {
                 .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
                 .build();
     }
-
-    public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
-        return UserSimpleResponseDto.builder()
-                .id(targetUser.getId())
-                .username(targetUser.getUsername())
-                .name(targetUser.getName())
-                .imageUrl(targetUser.getImageUrl())
-                .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
-                .build();
-    }
-
-
 }
 

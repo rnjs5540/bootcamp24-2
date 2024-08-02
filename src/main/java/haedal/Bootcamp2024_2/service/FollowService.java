@@ -6,8 +6,6 @@ import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.repository.FollowRepository;
 import haedal.Bootcamp2024_2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,40 +19,34 @@ public class FollowService {
     @Autowired
     private UserService userService;
 
-    public void followUser(Long followerId, Long followingId) {
-        User follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로워 회원입니다."));
-        User following = userRepository.findById(followingId)
+    public void followUser(User currentUser, Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로잉 회원입니다."));
 
-        if (followerId.equals(followingId)) {
+        if (currentUser.getId().equals(targetUserId)) {
             throw new IllegalArgumentException("자기 자신을 팔로우 할 수 없습니다.");
         }
-        if (followRepository.existsByFollowerAndFollowing(follower, following)) {
+        if (followRepository.existsByFollowerAndFollowing(currentUser, targetUser)) {
             throw new IllegalStateException("이미 팔로우중입니다.");
         }
 
-        Follow follow = new Follow(follower, following);
+        Follow follow = new Follow(currentUser, targetUser);
         followRepository.save(follow);
     }
 
 
-    public void unfollowUser(Long followerId, Long followingId) {
-        User follower = userRepository.findById(followerId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로워 회원입니다."));
-        User following = userRepository.findById(followingId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팔로잉 회원입니다."));
+    public void unfollowUser(User currentUser, Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+        Follow follow = followRepository.findByFollowerAndFollowing(currentUser, targetUser)
+                .orElseThrow(() -> new IllegalArgumentException("팔로우 하고있지 않습니다."));
 
         followRepository.delete(follow);
     }
 
 
-    public List<UserSimpleResponseDto> getFollowingUsers(Long currentUserId, Long targetUserId) {
-        User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public List<UserSimpleResponseDto> getFollowingUsers(User currentUser, Long targetUserId) {
         User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
@@ -65,9 +57,7 @@ public class FollowService {
     }
 
 
-    public List<UserSimpleResponseDto> getFollowerUsers(Long currentUserId, Long targetUserId) {
-        User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public List<UserSimpleResponseDto> getFollowerUsers(User currentUser, Long targetUserId) {
         User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 

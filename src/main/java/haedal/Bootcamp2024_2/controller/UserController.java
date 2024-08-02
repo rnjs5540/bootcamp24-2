@@ -39,7 +39,7 @@ public class UserController {
     @PutMapping("/users/profile")
     public ResponseEntity<UserDetailResponseDto> updateUser(@RequestBody UserUpdateRequestDto userUpdateRequestDto, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
-        UserDetailResponseDto updated = userService.updateUser(currentUser.getId(), userUpdateRequestDto);
+        UserDetailResponseDto updated = userService.updateUser(currentUser, userUpdateRequestDto);
         return ResponseEntity.ok(updated);
     }
 
@@ -47,7 +47,7 @@ public class UserController {
     public ResponseEntity<UserDetailResponseDto> getUserProfile(@PathVariable Long userId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        UserDetailResponseDto userDetailResponseDto = userService.getUserDetail(currentUser.getId(), userId);
+        UserDetailResponseDto userDetailResponseDto = userService.getUserDetail(currentUser, userId);
 
         return ResponseEntity.ok(userDetailResponseDto);
     }
@@ -57,7 +57,7 @@ public class UserController {
     public ResponseEntity<UserDetailResponseDto> getUserProfileByUsername(@PathVariable String username, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        UserDetailResponseDto userDetailResponseDto = userService.getUserDetailByUsername(currentUser.getId(), username);
+        UserDetailResponseDto userDetailResponseDto = userService.getUserDetailByUsername(currentUser, username);
 
         return ResponseEntity.ok(userDetailResponseDto);
     }

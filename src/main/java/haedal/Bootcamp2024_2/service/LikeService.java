@@ -6,10 +6,7 @@ import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.repository.LikeRepository;
 import haedal.Bootcamp2024_2.repository.PostRepository;
-import haedal.Bootcamp2024_2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,40 +19,30 @@ public class LikeService {
     @Autowired
     private PostRepository postRepository;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private UserService userService;
 
-    public void likePost(Long userId, Long postId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public void likePost(User currentUser, Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
-
-        if (likeRepository.existsByUserAndPost(user, post)) {
+        if (likeRepository.existsByUserAndPost(currentUser, post)) {
             throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
         }
 
-        Like like = new Like(user, post);
+        Like like = new Like(currentUser, post);
         likeRepository.save(like);
     }
 
-    public void unlikePost(Long userId, Long postId) {
+    public void unlikePost(User currentUser, Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        Like like = likeRepository.findByUserAndPost(user, post)
+        Like like = likeRepository.findByUserAndPost(currentUser, post)
                 .orElseThrow(() -> new IllegalArgumentException("좋아요가 존재하지 않습니다."));
-
         likeRepository.delete(like);
     }
 
 
-    public List<UserSimpleResponseDto> getUsersWhoLikedPost(Long currentUserId, Long postId) {
-        User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public List<UserSimpleResponseDto> getUsersWhoLikedPost(User currentUser, Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
 

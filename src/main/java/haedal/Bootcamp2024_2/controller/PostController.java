@@ -60,7 +60,7 @@ public class PostController {
 
         User currentUser = authService.getCurrentUser(request);
 
-        List<PostResponseDto> posts = postService.getFollowingUsersPosts(currentUser.getId());
+        List<PostResponseDto> posts = postService.getFollowingUsersPosts(currentUser);
         return ResponseEntity.ok(posts);
     }
 
@@ -69,7 +69,7 @@ public class PostController {
     public ResponseEntity<String> likePost(@PathVariable Long postId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        likeService.likePost(currentUser.getId(), postId);
+        likeService.likePost(currentUser, postId);
         return ResponseEntity.ok().build();
 
     }
@@ -78,7 +78,7 @@ public class PostController {
     public ResponseEntity<String> unlikePost(HttpServletRequest request, @PathVariable Long postId) {
         User currentUser = authService.getCurrentUser(request);
 
-        likeService.unlikePost(currentUser.getId(), postId);
+        likeService.unlikePost(currentUser, postId);
         return ResponseEntity.ok().build();
     }
 
@@ -86,7 +86,7 @@ public class PostController {
     public ResponseEntity<List<UserSimpleResponseDto>> getUsersWhoLikedPost(@PathVariable Long postId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        List<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(currentUser.getId(), postId);
+        List<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(currentUser, postId);
         return ResponseEntity.ok(usersWhoLikedPost);
     }
 }
