@@ -96,8 +96,8 @@ public class UserService {
                 .bio(targetUser.getBio())
                 .joinedAt(targetUser.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
                 .postCount(postRepository.countByUser(targetUser))
-                .followerCount(followRepository.countByFollower(targetUser))
-                .followingCount(followRepository.countByFollowing(targetUser))
+                .followerCount(followRepository.countByFollowing(targetUser))
+                .followingCount(followRepository.countByFollower(targetUser))
                 .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
                 .build();
     }
