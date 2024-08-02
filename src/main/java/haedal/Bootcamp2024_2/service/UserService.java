@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +35,12 @@ public class UserService {
         userRepository.save(user);
 
         return getUserSimple(user.getId());
+    }
+
+    public List<UserSimpleResponseDto> getAllUsers(User currentUser) {
+        List<User> users = userRepository.findAll();
+        users.remove(currentUser);
+        return users.stream().map(user -> getUserSimple(user.getId())).toList();
     }
 
     public UserDetailResponseDto updateUser(Long userId, UserUpdateRequestDto userUpdateRequestDto) {
@@ -80,10 +87,10 @@ public class UserService {
 
     public UserSimpleResponseDto getUserSimple(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         return new UserSimpleResponseDto(
-                userId,
+                user.getId(),
                 user.getUsername(),
                 user.getImageUrl(),
                 user.getName()

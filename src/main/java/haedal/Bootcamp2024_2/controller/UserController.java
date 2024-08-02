@@ -4,13 +4,12 @@ import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.request.UserUpdateRequestDto;
 import haedal.Bootcamp2024_2.dto.response.PostResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserDetailResponseDto;
+import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.service.AuthService;
 import haedal.Bootcamp2024_2.service.PostService;
 import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +27,21 @@ public class UserController {
     private PostService postService;
 
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserSimpleResponseDto>> getAllUsers(HttpServletRequest request) {
+        User currentUser = authService.getCurrentUser(request);
+        List<UserSimpleResponseDto> users = userService.getAllUsers(currentUser);
+
+        return ResponseEntity.ok(users);
+    }
+
+
     @PutMapping("/users/profile")
     public ResponseEntity<UserDetailResponseDto> updateUser(@RequestBody UserUpdateRequestDto userUpdateRequestDto, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
         UserDetailResponseDto updatedUser = userService.updateUser(currentUser.getId(), userUpdateRequestDto);
         return ResponseEntity.ok(updatedUser);
     }
-
 
     @GetMapping("/users/{userId}/profile")
     public ResponseEntity<UserDetailResponseDto> getUserDetail(@PathVariable Long userId) {
