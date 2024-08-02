@@ -21,15 +21,13 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Lob  // Large OBject의 줄임말. blob: binary lob
-    private byte[] image;
+    @Column(name = "image_url")
+    @Getter
+    @Setter
+    private String imageUrl;
 
     @Column(length = 2000)
     private String context;
-
-    @Column(name = "like_count")
-    @Setter
-    private Integer likeCount;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -38,11 +36,10 @@ public class Post {
     @JsonIgnore // 직렬화 시 무시
     private List<Like> likes;
 
-    public Post(User user, byte[] image, String context) {
+    public Post(User user, String context, String imageUrl) {
         this.user = user;
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.context = context;
-        this.likeCount = 0;
         this.createdAt = LocalDateTime.now();
     }
 }

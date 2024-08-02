@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -28,8 +27,8 @@ public class PostService {
     private LikeRepository likeRepository;
 
 
-    public void savePost(Post post) throws IOException {
-        postRepository.save(post);
+    public void savePost(Post post){
+        Post saved = postRepository.save(post);
     }
 
     public Page<PostResponseDto> getFollowingUsersPosts(Long userId, Pageable pageable) {
@@ -59,7 +58,9 @@ public class PostService {
         UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
                 user.getId(),
                 user.getUsername(),
-                user.getUserImage(),
+null,
+//                user.getUserImage(),
+
                 user.getName()
         );
 
@@ -69,7 +70,8 @@ public class PostService {
         return new PostResponseDto(
                 post.getId(),
                 userSimpleResponseDto,
-                post.getImage(),
+null,
+//                post.getImage(),
                 post.getContext(),
                 likeCount,
                 likeRepository.existsByUserAndPost(user, post),

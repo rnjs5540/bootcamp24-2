@@ -55,7 +55,8 @@ public class LikeService {
         return likes.map(like -> new UserSimpleResponseDto(
                 like.getUser().getId(),
                 like.getUser().getUsername(),
-                like.getUser().getUserImage(),
+null,
+//                like.getUser().getUserImage(),
                 like.getUser().getName()
         ));
     }

@@ -53,7 +53,8 @@ public class FollowService {
         return followings.map(follow -> new UserSimpleResponseDto(
                 follow.getFollowing().getId(),
                 follow.getFollowing().getUsername(),
-                follow.getFollowing().getUserImage(),
+null,
+//                follow.getFollowing().getUserImage(),
                 follow.getFollowing().getName()
         ));
     }
@@ -67,7 +68,8 @@ public class FollowService {
         return followers.map(follow -> new UserSimpleResponseDto(
                 follow.getFollower().getId(),
                 follow.getFollower().getUsername(),
-                follow.getFollower().getUserImage(),
+null,
+//                follow.getFollower().getUserImage(),
                 follow.getFollower().getName()
         ));
     }

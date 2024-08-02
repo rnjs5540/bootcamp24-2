@@ -36,21 +36,21 @@ public class PostController {
 
     @PostMapping("/posts")
     public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) throws IOException {
-        // 이미지 보내고, 포스트아이디 리턴하면 내용 보내기
         User currentUser = authService.getCurrentUser(request);
 
-        // 이미지 byte[]로 변경
-        byte[] imageBytes = Base64.getDecoder().decode(postRequestDto.getImage());
+//        // 이미지 검증
+//        String imageUrl = postRequestDto.getImageUrl();
+//        String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/userImages";
+//        Path imagePath = Paths.get(uploadDir).resolve(imageUrl).normalize();
+//        if (!Files.exists(imagePath) || !Files.isReadable(imagePath)) {
+//            throw new IllegalArgumentException("이미지가 존재하지 않거나 읽을 수 없습니다.");
+//        }
+
         // 새로운 게시물 생성
-        Post post = new Post(currentUser, imageBytes, postRequestDto.getContext());
+        Post post = new Post(currentUser, postRequestDto.getContext(), postRequestDto.getImageUrl());
 
         postService.savePost(post);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/images/postImages/images")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
-
     }
 
     @GetMapping("/posts/following")

@@ -26,7 +26,7 @@ public class AuthController {
                 userRegistrationRequestDto.getPassword(),
                 userRegistrationRequestDto.getName()
         );
-        UserSimpleResponseDto savedUser = userService.save(user);
+        UserSimpleResponseDto savedUser = userService.saveUser(user);
 
         return ResponseEntity.ok(savedUser);
     }

@@ -27,10 +27,6 @@ public class User {
     @Setter
     private String name;
 
-    @Column(name = "user_Image")
-    @Setter
-    private String userImage;
-
     @Column(length = 500)
     @Setter
     private String bio;
@@ -38,6 +34,9 @@ public class User {
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
 
+    @Column(name = "image_url")
+    @Setter
+    private String imageUrl;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore // 직렬화 시 무시
@@ -59,8 +58,8 @@ public class User {
         this.username = username;
         this.password = password;
         this.name = name;
-        this.userImage = null;
         this.bio = null;
         this.joinedAt = LocalDateTime.now();
+        this.imageUrl = null;
     }
 }
