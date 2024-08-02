@@ -68,5 +68,4 @@ public class UserController {
         List<PostResponseDto> posts = postService.getPostsByUser(userId);
         return ResponseEntity.ok(posts);
     }
-
 }
