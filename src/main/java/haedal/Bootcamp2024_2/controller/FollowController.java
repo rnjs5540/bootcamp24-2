@@ -8,24 +8,17 @@ import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-public class
-FollowController {
+@RestController
+public class FollowController {
 
     @Autowired
-    FollowService followService;
+    private FollowService followService;
     @Autowired
-    UserService userService;
-    @Autowired
-    AuthService authService;
+    private AuthService authService;
 
     @PostMapping("/follows/{followingId}")
     public ResponseEntity<Void> followUser(@PathVariable Long followingId, HttpServletRequest request) {

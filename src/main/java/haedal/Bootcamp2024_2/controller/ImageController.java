@@ -3,26 +3,22 @@ package haedal.Bootcamp2024_2.controller;
 import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.service.AuthService;
 import haedal.Bootcamp2024_2.service.ImageService;
-import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-@Controller
+@RestController
 public class ImageController {
     @Autowired
-    UserService userService;
+    private AuthService authService;
     @Autowired
-    AuthService authService;
-    @Autowired
-    ImageService imageService;
+    private ImageService imageService;
 
     @PostMapping("/images/postImages")
     public ResponseEntity<String> uploadPostImage(@RequestParam("image") MultipartFile image) throws IOException {

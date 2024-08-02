@@ -18,9 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping
 public class PostController {
-
     @Autowired
     private PostService postService;
     @Autowired

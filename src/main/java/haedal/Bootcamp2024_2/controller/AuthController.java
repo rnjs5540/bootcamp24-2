@@ -12,14 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
     @Autowired
     private AuthService authService;
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<UserSimpleResponseDto> registerUser(@RequestBody UserRegistrationRequestDto userRegistrationRequestDto) {
         User user = new User(
                 userRegistrationRequestDto.getUsername(),
@@ -32,21 +31,21 @@ public class AuthController {
     }
 
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<UserSimpleResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
         UserSimpleResponseDto userSimpleResponseDto = authService.login(loginRequestDto, request);
         return ResponseEntity.ok(userSimpleResponseDto);
     }
 
 
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
+    @PostMapping("/auth/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
         authService.logout(request);
-        return ResponseEntity.ok("로그아웃 성공");
+        return ResponseEntity.ok().build();
     }
 
 
-    @GetMapping("/me")
+    @GetMapping("/auth/me")
     public ResponseEntity<UserSimpleResponseDto> me(HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
