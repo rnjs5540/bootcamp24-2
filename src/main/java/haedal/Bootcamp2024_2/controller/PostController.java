@@ -6,6 +6,7 @@ import haedal.Bootcamp2024_2.dto.request.PostRequestDto;
 import haedal.Bootcamp2024_2.dto.response.PostResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.service.AuthService;
+import haedal.Bootcamp2024_2.service.ImageService;
 import haedal.Bootcamp2024_2.service.LikeService;
 import haedal.Bootcamp2024_2.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,20 +33,20 @@ public class PostController {
     @Autowired
     private LikeService likeService;
     @Autowired
-    AuthService authService;
+    private AuthService authService;
+    @Autowired
+    private ImageService imageService;
 
 
     @PostMapping("/posts")
     public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) throws IOException {
         User currentUser = authService.getCurrentUser(request);
 
-//        // 이미지 검증
-//        String imageUrl = postRequestDto.getImageUrl();
-//        String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/userImages";
-//        Path imagePath = Paths.get(uploadDir).resolve(imageUrl).normalize();
-//        if (!Files.exists(imagePath) || !Files.isReadable(imagePath)) {
-//            throw new IllegalArgumentException("이미지가 존재하지 않거나 읽을 수 없습니다.");
-//        }
+        // 이미지 검증
+        String imageUrl = postRequestDto.getImageUrl();
+        if (!imageService.imageExists(imageUrl)) {
+            throw new IllegalArgumentException("이미지가 존재하지 않거나 읽을 수 없습니다.");
+        }
 
         // 새로운 게시물 생성
         Post post = new Post(currentUser, postRequestDto.getContext(), postRequestDto.getImageUrl());

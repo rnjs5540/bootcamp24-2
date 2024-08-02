@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -22,6 +23,13 @@ public class ImageService {
 
     private final String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static";
         // System.getProperty("user.dir"): 현재작업디렉토리의 절대경로
+
+
+    public boolean imageExists(String imageUrl) {
+        Path imagePath = Paths.get(uploadDir).resolve(imageUrl).normalize();
+        return Files.exists(imagePath) && Files.isReadable(imagePath);
+    }
+
 
     public String savePostImage(MultipartFile image) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
@@ -60,11 +68,6 @@ public class ImageService {
     public Resource loadImageAsResource(String imageUrl) throws MalformedURLException {
         Path imagePath = Paths.get(uploadDir).resolve(imageUrl).normalize();
         Resource resource = new UrlResource(imagePath.toUri());
-
-        if (resource.exists() || resource.isReadable()) {
-            return resource;
-        } else {
-            throw new RuntimeException("Could not read the file!");
-        }
+        return resource;
     }
 }
