@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class FollowController {
 
@@ -46,14 +48,14 @@ public class FollowController {
 
 
     @GetMapping("/follows/{userId}/following")
-    public ResponseEntity<Page<UserSimpleResponseDto>> getFollowingUsers(@PathVariable Long userId, Pageable pageable) {
-        Page<UserSimpleResponseDto> followingUsers = followService.getFollowingUsers(userId, pageable);
+    public ResponseEntity<List<UserSimpleResponseDto>> getFollowingUsers(@PathVariable Long userId) {
+        List<UserSimpleResponseDto> followingUsers = followService.getFollowingUsers(userId);
         return ResponseEntity.ok(followingUsers);
     }
 
     @GetMapping("/follows/{userId}/follower")
-    public ResponseEntity<Page<UserSimpleResponseDto>> getFollowerUsers(@PathVariable Long userId, Pageable pageable) {
-        Page<UserSimpleResponseDto> followerUsers = followService.getFollowerUsers(userId, pageable);
+    public ResponseEntity<List<UserSimpleResponseDto>> getFollowerUsers(@PathVariable Long userId) {
+        List<UserSimpleResponseDto> followerUsers = followService.getFollowerUsers(userId);
         return ResponseEntity.ok(followerUsers);
     }
 }

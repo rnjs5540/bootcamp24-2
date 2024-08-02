@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -54,12 +55,12 @@ public class PostController {
     }
 
     @GetMapping("/posts/following")
-    public ResponseEntity<Page<PostResponseDto>> getFollowingUsersPosts(HttpServletRequest request, Pageable pageable) {
+    public ResponseEntity<List<PostResponseDto>> getFollowingUsersPosts(HttpServletRequest request) {
         System.out.println(Arrays.toString(request.getCookies()));
 
         User currentUser = authService.getCurrentUser(request);
 
-        Page<PostResponseDto> posts = postService.getFollowingUsersPosts(currentUser.getId(), pageable);
+        List<PostResponseDto> posts = postService.getFollowingUsersPosts(currentUser.getId());
         return ResponseEntity.ok(posts);
     }
 
@@ -82,8 +83,8 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}/like")
-    public ResponseEntity<Page<UserSimpleResponseDto>> getUsersWhoLikedPost(@PathVariable Long postId, Pageable pageable) {
-        Page<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(postId, pageable);
+    public ResponseEntity<List<UserSimpleResponseDto>> getUsersWhoLikedPost(@PathVariable Long postId) {
+        List<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(postId);
         return ResponseEntity.ok(usersWhoLikedPost);
     }
 }

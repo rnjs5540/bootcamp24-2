@@ -31,7 +31,7 @@ public class PostService {
         Post saved = postRepository.save(post);
     }
 
-    public Page<PostResponseDto> getFollowingUsersPosts(Long userId, Pageable pageable) {
+    public List<PostResponseDto> getFollowingUsersPosts(Long userId) {
        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
@@ -39,18 +39,18 @@ public class PostService {
                 .map(follow -> follow.getFollowing().getId())
                 .toList();
 
-        Page<Post> posts = postRepository.findByUser_IdIn(followingIds, pageable);
-        return posts.map(post -> convertPostToDto(post));
+        List<Post> posts = postRepository.findByUser_IdIn(followingIds);
+        return posts.stream().map(post -> convertPostToDto(post)).toList();
     }
 
 
-    public Page<PostResponseDto> getPostsByUser(Long userId, Pageable pageable) {
+    public List<PostResponseDto> getPostsByUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        Page<Post> posts = postRepository.findByUser(user, pageable);
+        List<Post> posts = postRepository.findByUser(user);
 
-        return posts.map(post -> convertPostToDto(post));
+        return posts.stream().map(post -> convertPostToDto(post)).toList();
     }
 
     private PostResponseDto convertPostToDto(Post post) {
@@ -58,9 +58,7 @@ public class PostService {
         UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
                 user.getId(),
                 user.getUsername(),
-null,
-//                user.getUserImage(),
-
+                user.getImageUrl(),
                 user.getName()
         );
 
@@ -70,8 +68,7 @@ null,
         return new PostResponseDto(
                 post.getId(),
                 userSimpleResponseDto,
-null,
-//                post.getImage(),
+                post.getImageUrl(),
                 post.getContext(),
                 likeCount,
                 likeRepository.existsByUserAndPost(user, post),

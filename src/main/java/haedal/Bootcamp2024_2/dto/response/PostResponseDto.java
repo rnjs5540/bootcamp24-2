@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class PostResponseDto {
     private Long id;
     private UserSimpleResponseDto user;
-    private byte[] image;
+    private String imageUrl;
     private String context;
     private Long likeCount;
     private boolean islike;

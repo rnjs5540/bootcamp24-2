@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FollowService {
     @Autowired
@@ -45,32 +47,30 @@ public class FollowService {
     }
 
 
-    public Page<UserSimpleResponseDto> getFollowingUsers(Long userId, Pageable pageable) {
+    public List<UserSimpleResponseDto> getFollowingUsers(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        Page<Follow> followings = followRepository.findByFollower(user, pageable);
-        return followings.map(follow -> new UserSimpleResponseDto(
+        List<Follow> followings = followRepository.findByFollower(user);
+        return followings.stream().map(follow -> new UserSimpleResponseDto(
                 follow.getFollowing().getId(),
                 follow.getFollowing().getUsername(),
-null,
-//                follow.getFollowing().getUserImage(),
+                follow.getFollowing().getImageUrl(),
                 follow.getFollowing().getName()
-        ));
+        )).toList();
     }
 
 
-    public Page<UserSimpleResponseDto> getFollowerUsers(Long userId, Pageable pageable) {
+    public List<UserSimpleResponseDto> getFollowerUsers(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        Page<Follow> followers = followRepository.findByFollowing(user, pageable);
-        return followers.map(follow -> new UserSimpleResponseDto(
-                follow.getFollower().getId(),
-                follow.getFollower().getUsername(),
-null,
-//                follow.getFollower().getUserImage(),
-                follow.getFollower().getName()
-        ));
+        List<Follow> followers = followRepository.findByFollowing(user);
+        return followers.stream().map(follow -> new UserSimpleResponseDto(
+                follow.getFollowing().getId(),
+                follow.getFollowing().getUsername(),
+                follow.getFollowing().getImageUrl(),
+                follow.getFollowing().getName()
+        )).toList();
     }
 }

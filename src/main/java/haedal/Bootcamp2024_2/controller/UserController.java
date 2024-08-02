@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping
@@ -41,8 +43,8 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}/posts")
-    public ResponseEntity<Page<PostResponseDto>> getPostsByUser(@PathVariable Long userId, Pageable pageable) {
-        Page<PostResponseDto> posts = postService.getPostsByUser(userId, pageable);
+    public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
+        List<PostResponseDto> posts = postService.getPostsByUser(userId);
         return ResponseEntity.ok(posts);
     }
 }

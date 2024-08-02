@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LikeService {
 
@@ -49,15 +51,14 @@ public class LikeService {
     }
 
 
-    public Page<UserSimpleResponseDto> getUsersWhoLikedPost(Long postId, Pageable pageable) {
+    public List<UserSimpleResponseDto> getUsersWhoLikedPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        Page<Like> likes = likeRepository.findByPost(post, pageable);
-        return likes.map(like -> new UserSimpleResponseDto(
+        List<Like> likes = likeRepository.findByPost(post);
+        return likes.stream().map(like -> new UserSimpleResponseDto(
                 like.getUser().getId(),
                 like.getUser().getUsername(),
-null,
-//                like.getUser().getUserImage(),
+                like.getUser().getImageUrl(),
                 like.getUser().getName()
-        ));
+        )).toList();
     }
 }
