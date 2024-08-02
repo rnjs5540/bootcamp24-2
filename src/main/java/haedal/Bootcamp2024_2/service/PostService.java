@@ -9,6 +9,7 @@ import haedal.Bootcamp2024_2.repository.PostRepository;
 import haedal.Bootcamp2024_2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,15 +32,18 @@ public class PostService {
     }
 
     public List<PostResponseDto> getFollowingUsersPosts(User currentUser) {
-        List<Long> followingIds = currentUser.getFollowings().stream()
-                .map(follow -> follow.getFollowing().getId())
+        User user = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        List<User> followingUsers = user.getFollowings().stream()
+                .map(follow -> follow.getFollowing())
                 .toList();
 
-        List<Post> posts = postRepository.findByUser_IdIn(followingIds);
+        List<Post> posts = postRepository.findByUserIn(followingUsers);
         posts.sort((p1, p2) ->
                 p2.getCreatedAt().compareTo(p1.getCreatedAt()));
 
-        return posts.stream().map(post -> convertPostToDto(currentUser, post)).toList();
+        return posts.stream().map(post -> convertPostToDto(user, post)).toList();
     }
 
 

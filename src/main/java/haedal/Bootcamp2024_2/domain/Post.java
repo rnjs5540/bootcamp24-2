@@ -33,7 +33,6 @@ public class Post {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "post")
-    @JsonIgnore // 직렬화 시 무시
     private List<Like> likes;
 
     public Post(User user, String context, String imageUrl) {

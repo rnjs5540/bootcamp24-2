@@ -15,12 +15,10 @@ public class Like {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-//    @JsonBackReference  // 직렬화 시 무시
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-//    @JsonBackReference  // 직렬화 시 무시
     private Post post;
 
     public Like(User user, Post post) {

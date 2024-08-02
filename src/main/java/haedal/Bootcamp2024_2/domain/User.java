@@ -1,6 +1,5 @@
 package haedal.Bootcamp2024_2.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,19 +38,15 @@ public class User {
     private String imageUrl;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore // 직렬화 시 무시
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore // 직렬화 시 무시
     private List<Like> likes;
 
     @OneToMany(mappedBy = "follower")
-    @JsonIgnore // 직렬화 시 무시
     private List<Follow> followings;
 
     @OneToMany(mappedBy = "following")
-    @JsonIgnore // 직렬화 시 무시
     private List<Follow> followers;
 
     public User(String username, String password, String name) {
