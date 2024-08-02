@@ -1,6 +1,5 @@
 package haedal.Bootcamp2024_2.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

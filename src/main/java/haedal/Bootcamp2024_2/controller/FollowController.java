@@ -6,11 +6,7 @@ import haedal.Bootcamp2024_2.service.AuthService;
 import haedal.Bootcamp2024_2.service.FollowService;
 import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 @Controller
-public class FollowController {
+public class
+FollowController {
 
     @Autowired
     FollowService followService;

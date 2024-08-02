@@ -1,10 +1,8 @@
 package haedal.Bootcamp2024_2.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,8 +20,6 @@ public class Post {
     private User user;
 
     @Column(name = "image_url")
-    @Getter
-    @Setter
     private String imageUrl;
 
     @Column(length = 2000)

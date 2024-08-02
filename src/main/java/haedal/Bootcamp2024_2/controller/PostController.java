@@ -10,18 +10,11 @@ import haedal.Bootcamp2024_2.service.ImageService;
 import haedal.Bootcamp2024_2.service.LikeService;
 import haedal.Bootcamp2024_2.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -39,7 +32,7 @@ public class PostController {
 
 
     @PostMapping("/posts")
-    public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) throws IOException {
+    public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request){
         User currentUser = authService.getCurrentUser(request);
 
         // 이미지 검증
