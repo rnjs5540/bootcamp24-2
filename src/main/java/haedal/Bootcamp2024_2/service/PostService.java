@@ -8,11 +8,8 @@ import haedal.Bootcamp2024_2.repository.LikeRepository;
 import haedal.Bootcamp2024_2.repository.PostRepository;
 import haedal.Bootcamp2024_2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -40,7 +37,9 @@ public class PostService {
                 .toList();
 
         List<Post> posts = postRepository.findByUser_IdIn(followingIds);
-        return posts.stream().map(post -> convertPostToDto(post)).toList();
+        posts.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+
+        return posts.stream().map(post -> convertPostToDto(user, post)).toList();
     }
 
 
@@ -50,29 +49,27 @@ public class PostService {
 
         List<Post> posts = postRepository.findByUser(user);
 
-        return posts.stream().map(post -> convertPostToDto(post)).toList();
+        return posts.stream().map(post -> convertPostToDto(user, post)).toList();
     }
 
-    private PostResponseDto convertPostToDto(Post post) {
-        User user = post.getUser();
-        UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getImageUrl(),
-                user.getName()
-        );
 
-        Long likeCount = likeRepository.countByPost(post);
-        String createdAt = post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+    private PostResponseDto convertPostToDto(User currentUser, Post post) {
+        User author = post.getUser();
+        UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
+                author.getId(),
+                author.getUsername(),
+                author.getImageUrl(),
+                author.getName()
+        );
 
         return new PostResponseDto(
                 post.getId(),
                 userSimpleResponseDto,
                 post.getImageUrl(),
                 post.getContext(),
-                likeCount,
-                likeRepository.existsByUserAndPost(user, post),
-                createdAt
+                likeRepository.countByPost(post),
+                likeRepository.existsByUserAndPost(currentUser, post),
+                post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))
         );
     }
 }
