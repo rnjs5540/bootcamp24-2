@@ -11,6 +11,6 @@ public class UserSimpleResponseDto {
     private Long id;
     private String username;
     private String name;
-    private String imageUrl;
+    private String imageData;
     private Boolean isFollowing;
 }

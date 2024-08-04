@@ -22,12 +22,6 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @PostMapping("/images/postImages")
-    public ResponseEntity<String> uploadPostImage(@RequestParam("image") MultipartFile image) throws IOException {
-        String imageUrl = imageService.savePostImage(image);
-        return ResponseEntity.ok(imageUrl);
-    }
-
     @PutMapping("/users/image")
     public ResponseEntity<String> updateUserImage(@RequestParam("image") MultipartFile image, HttpServletRequest request) throws IOException {
         User currentUser = authService.getCurrentUser(request);
@@ -36,12 +30,12 @@ public class ImageController {
         return ResponseEntity.ok(savedImageName);
     }
 
-    @GetMapping("/images/{imageUrl}")
-    public ResponseEntity<Resource> getImage(@PathVariable String imageUrl) throws IOException {
-        Resource resource = imageService.loadImageAsResource(imageUrl);
-        Path imagePath = resource.getFile().toPath();
-        String contentType = Files.probeContentType(imagePath);
-
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
-    }
+//    @GetMapping("/images/{imageUrl}")
+//    public ResponseEntity<Resource> getImage(@PathVariable String imageUrl) throws IOException {
+//        Resource resource = imageService.loadImageAsResource(imageUrl);
+//        Path imagePath = resource.getFile().toPath();
+//        String contentType = Files.probeContentType(imagePath);
+//
+//        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
+//    }
 }

@@ -11,7 +11,7 @@ public class UserDetailResponseDto {
     private Long id;
     private String username;
     private String name;
-    private String imageUrl;
+    private String imageData;
     private Boolean isFollowing;
     private String bio;
     private String joinedAt;

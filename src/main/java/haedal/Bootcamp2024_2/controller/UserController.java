@@ -2,11 +2,9 @@ package haedal.Bootcamp2024_2.controller;
 
 import haedal.Bootcamp2024_2.domain.User;
 import haedal.Bootcamp2024_2.dto.request.UserUpdateRequestDto;
-import haedal.Bootcamp2024_2.dto.response.PostResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserDetailResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.service.AuthService;
-import haedal.Bootcamp2024_2.service.PostService;
 import haedal.Bootcamp2024_2.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +20,6 @@ public class UserController {
     private AuthService authService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private PostService postService;
 
 
     @GetMapping("/users")

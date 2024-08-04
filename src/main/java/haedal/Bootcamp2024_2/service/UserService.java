@@ -22,6 +22,8 @@ public class UserService {
     private PostRepository postRepository;
     @Autowired
     private FollowRepository followRepository;
+    @Autowired
+    private ImageService imageService;
 
 
     public UserSimpleResponseDto saveUser(User newUser) {
@@ -84,21 +86,28 @@ public class UserService {
 
 
     public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
+        String imageUrl = currentUser.getImageUrl();
+        String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
+
         return UserSimpleResponseDto.builder()
                 .id(targetUser.getId())
                 .username(targetUser.getUsername())
                 .name(targetUser.getName())
-                .imageUrl(targetUser.getImageUrl())
+                .imageData(imageData)
                 .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
                 .build();
     }
 
     public UserDetailResponseDto convertUserToDetailDto(User currentUser, User targetUser) {
+        String imageUrl = currentUser.getImageUrl();
+        String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
+
+
         return UserDetailResponseDto.builder()
                 .id(targetUser.getId())
                 .username(targetUser.getUsername())
                 .name(targetUser.getName())
-                .imageUrl(targetUser.getImageUrl())
+                .imageData(imageData)
                 .bio(targetUser.getBio())
                 .joinedAt(targetUser.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
                 .postCount(postRepository.countByUser(targetUser))
