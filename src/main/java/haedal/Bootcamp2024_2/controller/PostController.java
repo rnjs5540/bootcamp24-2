@@ -2,7 +2,6 @@ package haedal.Bootcamp2024_2.controller;
 
 import haedal.Bootcamp2024_2.domain.Post;
 import haedal.Bootcamp2024_2.domain.User;
-import haedal.Bootcamp2024_2.dto.request.PostRequestDto;
 import haedal.Bootcamp2024_2.dto.response.PostResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
 import haedal.Bootcamp2024_2.service.AuthService;
@@ -13,7 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,17 +31,13 @@ public class PostController {
 
 
     @PostMapping("/posts")
-    public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request){
+    public ResponseEntity<Void> createPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content,
+                                           HttpServletRequest request) throws IOException {
         User currentUser = authService.getCurrentUser(request);
 
-        // 이미지 검증
-        String imageUrl = postRequestDto.getImageUrl();
-        if (!imageService.imageExists(imageUrl)) {
-            throw new IllegalArgumentException("이미지가 존재하지 않거나 읽을 수 없습니다.");
-        }
+        String imageUrl = imageService.savePostImage(image);
 
-        // 새로운 게시물 생성
-        Post post = new Post(currentUser, postRequestDto.getContent(), postRequestDto.getImageUrl());
+        Post post = new Post(currentUser, content, imageUrl);
 
         postService.savePost(post);
         return ResponseEntity.ok().build();
