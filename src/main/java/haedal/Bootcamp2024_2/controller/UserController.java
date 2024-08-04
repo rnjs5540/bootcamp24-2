@@ -60,11 +60,4 @@ public class UserController {
 
         return ResponseEntity.ok(userDetailResponseDto);
     }
-
-
-    @GetMapping("/users/{userId}/posts")
-    public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
-        List<PostResponseDto> posts = postService.getPostsByUser(userId);
-        return ResponseEntity.ok(posts);
-    }
 }

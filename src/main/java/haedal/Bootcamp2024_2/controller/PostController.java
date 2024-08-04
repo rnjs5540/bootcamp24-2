@@ -43,6 +43,12 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/posts/user/{userId}")
+    public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
+        List<PostResponseDto> posts = postService.getPostsByUser(userId);
+        return ResponseEntity.ok(posts);
+    }
+
     @GetMapping("/posts/following")
     public ResponseEntity<List<PostResponseDto>> getFollowingUsersPosts(HttpServletRequest request) {
         System.out.println(Arrays.toString(request.getCookies()));
