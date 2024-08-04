@@ -24,6 +24,8 @@ public class PostService {
     private LikeRepository likeRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ImageService imageService;
 
 
     public void savePost(Post post){
@@ -51,8 +53,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         List<Post> posts = postRepository.findByUser(targetUser);
-        posts.sort((p1, p2) ->
-                p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+        posts.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
 
         return posts.stream().map(post -> convertPostToDto(targetUser, post)).toList();
     }
@@ -61,11 +62,13 @@ public class PostService {
     private PostResponseDto convertPostToDto(User currentUser, Post post) {
         User author = post.getUser();
         UserSimpleResponseDto userSimpleResponseDto = userService.convertUserToSimpleDto(currentUser, author);
+        String imageUrl = post.getImageUrl();
+        String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
 
         return PostResponseDto.builder()
                 .id(post.getId())
                 .user(userSimpleResponseDto)
-                .imageUrl(post.getImageUrl())
+                .imageData(imageData)
                 .content(post.getContent())
                 .likeCount(likeRepository.countByPost(post))
                 .islike(likeRepository.existsByUserAndPost(currentUser, post))

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 @Service
 public class ImageService {
@@ -66,5 +67,15 @@ public class ImageService {
         Path imagePath = uploadDir.resolve(imageUrl);
         Resource resource = new UrlResource(imagePath.toUri());
         return resource;
+    }
+
+    public String encodeImageToBase64(String imagePath) {
+        try {
+            Path path = Paths.get(imagePath);
+            byte[] imageBytes = Files.readAllBytes(path);
+            return Base64.getEncoder().encodeToString(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException("이미지를 base64로 인코딩하는데 실패했습니다.", e);
+        }
     }
 }
