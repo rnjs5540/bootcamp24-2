@@ -40,7 +40,7 @@ public class PostController {
         }
 
         // 새로운 게시물 생성
-        Post post = new Post(currentUser, postRequestDto.getContext(), postRequestDto.getImageUrl());
+        Post post = new Post(currentUser, postRequestDto.getContent(), postRequestDto.getImageUrl());
 
         postService.savePost(post);
         return ResponseEntity.ok().build();

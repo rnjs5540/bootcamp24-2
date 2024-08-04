@@ -11,7 +11,7 @@ public class PostResponseDto {
     private Long id;
     private UserSimpleResponseDto user;
     private String imageUrl;
-    private String context;
+    private String content;
     private Long likeCount;
     private Boolean islike;
     private String createdAt;

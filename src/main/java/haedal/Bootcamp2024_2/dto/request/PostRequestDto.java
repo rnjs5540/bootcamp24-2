@@ -5,5 +5,5 @@ import lombok.Getter;
 @Getter
 public class PostRequestDto {
     private String imageUrl;
-    private String context;
+    private String content;
 }

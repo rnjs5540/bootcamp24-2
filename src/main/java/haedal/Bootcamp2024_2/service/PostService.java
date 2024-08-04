@@ -66,7 +66,7 @@ public class PostService {
                 .id(post.getId())
                 .user(userSimpleResponseDto)
                 .imageUrl(post.getImageUrl())
-                .context(post.getContext())
+                .content(post.getContent())
                 .likeCount(likeRepository.countByPost(post))
                 .islike(likeRepository.existsByUserAndPost(currentUser, post))
                 .createdAt(post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))

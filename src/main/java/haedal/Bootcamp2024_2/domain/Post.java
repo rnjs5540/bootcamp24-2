@@ -23,7 +23,7 @@ public class Post {
     private String imageUrl;
 
     @Column(length = 2000)
-    private String context;
+    private String content;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -31,10 +31,10 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Like> likes;
 
-    public Post(User user, String context, String imageUrl) {
+    public Post(User user, String content, String imageUrl) {
         this.user = user;
         this.imageUrl = imageUrl;
-        this.context = context;
+        this.content = content;
         this.createdAt = LocalDateTime.now();
     }
 }
