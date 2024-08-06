@@ -71,7 +71,7 @@ public class PostService {
                 .imageData(imageData)
                 .content(post.getContent())
                 .likeCount(likeRepository.countByPost(post))
-                .islike(likeRepository.existsByUserAndPost(currentUser, post))
+                .isLike(likeRepository.existsByUserAndPost(currentUser, post))
                 .createdAt(post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
                 .build();
     }

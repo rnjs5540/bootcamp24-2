@@ -13,6 +13,6 @@ public class PostResponseDto {
     private String imageData;
     private String content;
     private Long likeCount;
-    private Boolean islike;
+    private Boolean isLike;
     private String createdAt;
 }
