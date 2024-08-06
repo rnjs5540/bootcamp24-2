@@ -57,12 +57,15 @@ public class UserService {
         return convertUserToDetailDto(currentUser, targetUser);
     }
 
-    public UserDetailResponseDto getUserDetailByUsername(User currentUser, String username) {
+
+    public UserSimpleResponseDto getUserSimpleByUsername(User currentUser, String username) {
         User targetUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        return convertUserToDetailDto(currentUser, targetUser);
+        return convertUserToSimpleDto(currentUser, targetUser);
+
     }
+
 
     public UserDetailResponseDto updateUser(User currentUser, UserUpdateRequestDto userUpdateRequestDto) {
         if (userUpdateRequestDto.getUsername() != null) {

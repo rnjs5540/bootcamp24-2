@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,12 +24,27 @@ public class UserController {
 
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserSimpleResponseDto>> getAllUsers(HttpServletRequest request) {
+    public ResponseEntity<List<UserSimpleResponseDto>> getUsers(@RequestParam(required = false) String username, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
-        List<UserSimpleResponseDto> users = userService.getAllUsers(currentUser);
 
-        return ResponseEntity.ok(users);
+        if (username != null) {
+            UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimpleByUsername(currentUser, username);
+            List<UserSimpleResponseDto> user = new ArrayList<>();
+            user.add(userSimpleResponseDto);
+            return ResponseEntity.ok(user);
+        } else {
+            List<UserSimpleResponseDto> users = userService.getAllUsers(currentUser);
+            return ResponseEntity.ok(users);
+        }
     }
+
+//    @GetMapping("/users")
+//    public ResponseEntity<List<UserSimpleResponseDto>> getAllUsers(HttpServletRequest request) {
+//        User currentUser = authService.getCurrentUser(request);
+//        List<UserSimpleResponseDto> users = userService.getAllUsers(currentUser);
+//
+//        return ResponseEntity.ok(users);
+//    }
 
 
     @PutMapping("/users/profile")
@@ -47,13 +63,14 @@ public class UserController {
         return ResponseEntity.ok(userDetailResponseDto);
     }
 
-    // 검색할때
-    @GetMapping("/users/username/{username}/profile")
-    public ResponseEntity<UserDetailResponseDto> getUserProfileByUsername(@PathVariable String username, HttpServletRequest request) {
-        User currentUser = authService.getCurrentUser(request);
-
-        UserDetailResponseDto userDetailResponseDto = userService.getUserDetailByUsername(currentUser, username);
-
-        return ResponseEntity.ok(userDetailResponseDto);
-    }
+//    // 검색할때
+////    @GetMapping("/users/username/{username}/profile")
+//    @GetMapping("/users?username=")
+//    public ResponseEntity<UserDetailResponseDto> getUserProfileByUsername(@PathVariable String username, HttpServletRequest request) {
+//        User currentUser = authService.getCurrentUser(request);
+//
+//        UserDetailResponseDto userDetailResponseDto = userService.getUserDetailByUsername(currentUser, username);
+//
+//        return ResponseEntity.ok(userDetailResponseDto);
+//    }
 }
