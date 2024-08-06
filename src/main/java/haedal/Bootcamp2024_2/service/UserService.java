@@ -90,7 +90,7 @@ public class UserService {
 
 
     public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
-        String imageUrl = currentUser.getImageUrl();
+        String imageUrl = targetUser.getImageUrl();
         String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
 
         return UserSimpleResponseDto.builder()
@@ -103,7 +103,7 @@ public class UserService {
     }
 
     public UserDetailResponseDto convertUserToDetailDto(User currentUser, User targetUser) {
-        String imageUrl = currentUser.getImageUrl();
+        String imageUrl = targetUser.getImageUrl();
         String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
 
 
