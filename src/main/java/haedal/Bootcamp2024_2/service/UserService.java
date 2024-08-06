@@ -59,11 +59,12 @@ public class UserService {
 
 
     public UserSimpleResponseDto getUserSimpleByUsername(User currentUser, String username) {
-        User targetUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        User targetUser = userRepository.findByUsername(username).orElse(null);
+        if (targetUser == null) {
+            return null;
+        }
 
         return convertUserToSimpleDto(currentUser, targetUser);
-
     }
 
 

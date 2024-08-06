@@ -27,14 +27,17 @@ public class UserController {
     public ResponseEntity<List<UserSimpleResponseDto>> getUsers(@RequestParam(required = false) String username, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
-        if (username != null) {
-            UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimpleByUsername(currentUser, username);
-            List<UserSimpleResponseDto> user = new ArrayList<>();
-            user.add(userSimpleResponseDto);
-            return ResponseEntity.ok(user);
-        } else {
+        if (username == null || username.isEmpty()) {
             List<UserSimpleResponseDto> users = userService.getAllUsers(currentUser);
             return ResponseEntity.ok(users);
+        }
+        else {
+            List<UserSimpleResponseDto> user = new ArrayList<>();
+            UserSimpleResponseDto userSimpleResponseDto = userService.getUserSimpleByUsername(currentUser, username);
+            if (userSimpleResponseDto != null) {
+                user.add(userSimpleResponseDto);
+            }
+            return ResponseEntity.ok(user);
         }
     }
 
