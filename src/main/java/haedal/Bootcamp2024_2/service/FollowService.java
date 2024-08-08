@@ -12,12 +12,16 @@ import java.util.List;
 
 @Service
 public class FollowService {
+    private final FollowRepository followRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
+
     @Autowired
-    private FollowRepository followRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
+    public FollowService(FollowRepository followRepository, UserRepository userRepository, UserService userService) {
+        this.followRepository = followRepository;
+        this.userRepository = userRepository;
+        this.userService = userService;
+    }
 
     public void followUser(User currentUser, Long targetUserId) {
         User targetUser = userRepository.findById(targetUserId)

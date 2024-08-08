@@ -17,10 +17,14 @@ import java.util.List;
 
 @RestController
 public class UserController {
+    private final AuthService authService;
+    private final UserService userService;
+
     @Autowired
-    private AuthService authService;
-    @Autowired
-    private UserService userService;
+    public UserController(AuthService authService, UserService userService) {
+        this.authService = authService;
+        this.userService = userService;
+    }
 
 
     @GetMapping("/users")

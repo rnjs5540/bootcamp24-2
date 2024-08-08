@@ -20,14 +20,18 @@ import java.util.List;
 
 @RestController
 public class PostController {
+    private final PostService postService;
+    private final LikeService likeService;
+    private final AuthService authService;
+    private final ImageService imageService;
+
     @Autowired
-    private PostService postService;
-    @Autowired
-    private LikeService likeService;
-    @Autowired
-    private AuthService authService;
-    @Autowired
-    private ImageService imageService;
+    public PostController(PostService postService, LikeService likeService, AuthService authService, ImageService imageService) {
+        this.postService = postService;
+        this.likeService = likeService;
+        this.authService = authService;
+        this.imageService = imageService;
+    }
 
 
     @PostMapping("/posts")

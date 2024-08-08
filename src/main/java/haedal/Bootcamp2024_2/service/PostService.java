@@ -15,17 +15,20 @@ import java.util.List;
 
 @Service
 public class PostService {
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
+    private final UserService userService;
+    private final ImageService imageService;
 
     @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private LikeRepository likeRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ImageService imageService;
+    public PostService(PostRepository postRepository, UserRepository userRepository, LikeRepository likeRepository, UserService userService, ImageService imageService) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
+        this.userService = userService;
+        this.imageService = imageService;
+    }
 
 
     public void savePost(Post post){

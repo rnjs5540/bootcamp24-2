@@ -13,10 +13,14 @@ import java.util.List;
 
 @RestController
 public class FollowController {
+    private final FollowService followService;
+    private final AuthService authService;
+
     @Autowired
-    private FollowService followService;
-    @Autowired
-    private AuthService authService;
+    public FollowController(AuthService authService, FollowService followService) {
+        this.authService = authService;
+        this.followService = followService;
+    }
 
     @PostMapping("/follows/{followingId}")
     public ResponseEntity<Void> followUser(@PathVariable Long followingId, HttpServletRequest request) {

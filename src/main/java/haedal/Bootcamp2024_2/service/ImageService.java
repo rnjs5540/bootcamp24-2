@@ -16,11 +16,14 @@ import java.util.Base64;
 
 @Service
 public class ImageService {
-    @Autowired
-    UserRepository userRepository;
-
+    private final UserRepository userRepository;
     private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "src/main/resources/static");
         // System.getProperty("user.dir"): 현재작업디렉토리의 절대경로
+
+    @Autowired
+    public ImageService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
     public String savePostImage(MultipartFile image) throws IOException {

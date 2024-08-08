@@ -17,10 +17,14 @@ import java.nio.file.Path;
 
 @RestController
 public class ImageController {
+    private final AuthService authService;
+    private final ImageService imageService;
+
     @Autowired
-    private AuthService authService;
-    @Autowired
-    private ImageService imageService;
+    public ImageController(AuthService authService, ImageService imageService) {
+        this.authService = authService;
+        this.imageService = imageService;
+    }
 
     @PutMapping("/users/image")
     public ResponseEntity<String> updateUserImage(@RequestParam("image") MultipartFile image, HttpServletRequest request) throws IOException {

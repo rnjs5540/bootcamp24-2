@@ -11,10 +11,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
+    private final UserService userService;
+    private final UserRepository userRepository;
+
     @Autowired
-    UserService userService;
-    @Autowired
-    private UserRepository userRepository;
+    public AuthService(UserService userService, UserRepository userRepository) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+    }
 
 
     public User getCurrentUser(HttpServletRequest request) {

@@ -13,13 +13,16 @@ import java.util.List;
 
 @Service
 public class LikeService {
+    private final LikeRepository likeRepository;
+    private final PostRepository postRepository;
+    private final UserService userService;
 
     @Autowired
-    private LikeRepository likeRepository;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private UserService userService;
+    public LikeService(LikeRepository likeRepository, PostRepository postRepository, UserService userService) {
+        this.likeRepository = likeRepository;
+        this.postRepository = postRepository;
+        this.userService = userService;
+    }
 
     public void likePost(User currentUser, Long postId) {
         Post post = postRepository.findById(postId)

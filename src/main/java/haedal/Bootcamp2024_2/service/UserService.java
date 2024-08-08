@@ -15,15 +15,18 @@ import java.util.List;
 
 @Service
 public class UserService {
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final FollowRepository followRepository;
+    private final ImageService imageService;
 
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private FollowRepository followRepository;
-    @Autowired
-    private ImageService imageService;
+    public UserService(UserRepository userRepository, PostRepository postRepository, FollowRepository followRepository, ImageService imageService) {
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.followRepository = followRepository;
+        this.imageService = imageService;
+    }
 
 
     public UserSimpleResponseDto saveUser(User newUser) {
