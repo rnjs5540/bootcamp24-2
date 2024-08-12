@@ -68,14 +68,14 @@ public class PostService {
         String imageUrl = post.getImageUrl();
         String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
 
-        return PostResponseDto.builder()
-                .id(post.getId())
-                .user(userSimpleResponseDto)
-                .imageData(imageData)
-                .content(post.getContent())
-                .likeCount(likeRepository.countByPost(post))
-                .isLike(likeRepository.existsByUserAndPost(currentUser, post))
-                .createdAt(post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
-                .build();
+        return new PostResponseDto(
+                post.getId(),
+                userSimpleResponseDto,
+                imageData,
+                post.getContent(),
+                likeRepository.countByPost(post),
+                likeRepository.existsByUserAndPost(currentUser, post),
+                post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))
+        );
     }
 }

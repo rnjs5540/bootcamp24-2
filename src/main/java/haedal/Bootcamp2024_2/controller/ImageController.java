@@ -33,13 +33,4 @@ public class ImageController {
         String savedImageName = imageService.updateUserImage(currentUser, image);
         return ResponseEntity.ok(savedImageName);
     }
-
-//    @GetMapping("/images/{imageUrl}")
-//    public ResponseEntity<Resource> getImage(@PathVariable String imageUrl) throws IOException {
-//        Resource resource = imageService.loadImageAsResource(imageUrl);
-//        Path imagePath = resource.getFile().toPath();
-//        String contentType = Files.probeContentType(imagePath);
-//
-//        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
-//    }
 }

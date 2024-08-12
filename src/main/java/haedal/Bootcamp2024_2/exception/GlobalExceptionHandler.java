@@ -1,4 +1,4 @@
-package haedal.Bootcamp2024_2.controller;
+package haedal.Bootcamp2024_2.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

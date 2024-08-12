@@ -38,11 +38,8 @@ public class PostController {
     public ResponseEntity<Void> createPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content,
                                            HttpServletRequest request) throws IOException {
         User currentUser = authService.getCurrentUser(request);
-
         String imageUrl = imageService.savePostImage(image);
-
         Post post = new Post(currentUser, content, imageUrl);
-
         postService.savePost(post);
         return ResponseEntity.ok().build();
     }
@@ -55,8 +52,6 @@ public class PostController {
 
     @GetMapping("/posts/following")
     public ResponseEntity<List<PostResponseDto>> getFollowingUsersPosts(HttpServletRequest request) {
-        System.out.println(Arrays.toString(request.getCookies()));
-
         User currentUser = authService.getCurrentUser(request);
 
         List<PostResponseDto> posts = postService.getFollowingUsersPosts(currentUser);

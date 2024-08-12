@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,25 +40,19 @@ public class UserService {
         return convertUserToSimpleDto(newUser, newUser);
     }
 
-//    public UserSimpleResponseDto findUserById(Long id) {
-//        User user = userRepository.findById(id).orElse(null);
-//        if (user == null) {
-//            return null;
-//        }
-//
-//        return convertUserToSimpleDto(user, user);
-//    }
-
     public List<UserSimpleResponseDto> getAllUsers(User currentUser) {
         List<User> users = userRepository.findAll();
         users.remove(currentUser);
         return users.stream().map(user -> convertUserToSimpleDto(currentUser, user)).toList();
     }
 
-    public UserDetailResponseDto getUserDetail(User currentUser, Long targetUserId) {
-       User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        return convertUserToDetailDto(currentUser, targetUser);
+    public List<UserSimpleResponseDto> getUserByUsername(User currentUser, String username) {
+        List<UserSimpleResponseDto> user = new ArrayList<>();
+        UserSimpleResponseDto userSimpleResponseDto = getUserSimpleByUsername(currentUser, username);
+        if (userSimpleResponseDto != null) {
+            user.add(userSimpleResponseDto);
+        }
+        return user;
     }
 
 
@@ -68,6 +63,12 @@ public class UserService {
         }
 
         return convertUserToSimpleDto(currentUser, targetUser);
+    }
+
+    public UserDetailResponseDto getUserDetail(User currentUser, Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        return convertUserToDetailDto(currentUser, targetUser);
     }
 
 
@@ -90,19 +91,17 @@ public class UserService {
         return convertUserToDetailDto(currentUser, currentUser);
     }
 
-
-
     public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
         String imageUrl = targetUser.getImageUrl();
         String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
 
-        return UserSimpleResponseDto.builder()
-                .id(targetUser.getId())
-                .username(targetUser.getUsername())
-                .name(targetUser.getName())
-                .imageData(imageData)
-                .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
-                .build();
+        return new UserSimpleResponseDto(
+                targetUser.getId(),
+                targetUser.getUsername(),
+                targetUser.getName(),
+                imageData,
+                followRepository.existsByFollowerAndFollowing(currentUser, targetUser)
+        );
     }
 
     public UserDetailResponseDto convertUserToDetailDto(User currentUser, User targetUser) {
@@ -110,18 +109,18 @@ public class UserService {
         String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
 
 
-        return UserDetailResponseDto.builder()
-                .id(targetUser.getId())
-                .username(targetUser.getUsername())
-                .name(targetUser.getName())
-                .imageData(imageData)
-                .bio(targetUser.getBio())
-                .joinedAt(targetUser.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
-                .postCount(postRepository.countByUser(targetUser))
-                .followerCount(followRepository.countByFollowing(targetUser))
-                .followingCount(followRepository.countByFollower(targetUser))
-                .isFollowing(followRepository.existsByFollowerAndFollowing(currentUser, targetUser))
-                .build();
+        return new UserDetailResponseDto(
+                targetUser.getId(),
+                targetUser.getUsername(),
+                targetUser.getName(),
+                imageData,
+                false,
+                targetUser.getBio(),
+                targetUser.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")),
+                postRepository.countByUser(targetUser),
+                followRepository.countByFollowing(targetUser),
+                followRepository.countByFollower(targetUser)
+        );
     }
 }
 
