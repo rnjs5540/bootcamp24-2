@@ -1,4 +1,4 @@
-package haedal.Bootcamp2024_2.config;
+package config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
