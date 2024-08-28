@@ -22,10 +22,9 @@ public class AuthService {
 
 
     public User getCurrentUser(HttpServletRequest request) {
-        System.out.println();
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            throw new IllegalStateException("로그인되지 않았습니다.");  // unAuthorized
+            throw new IllegalStateException("로그인되지 않았습니다.");
         }
         return (User) session.getAttribute("user");
     }
