@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Follow {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long followId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "follower_id", nullable = false)
