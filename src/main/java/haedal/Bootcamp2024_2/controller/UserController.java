@@ -16,37 +16,38 @@ import java.util.List;
 
 @RestController
 public class UserController {
-    private final AuthService authService;
     private final UserService userService;
+    private final AuthService authService;
 
     @Autowired
-    public UserController(AuthService authService, UserService userService) {
-        this.authService = authService;
+
+    public UserController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
-
-    @GetMapping("/users")
+    @GetMapping("/Users")
     public ResponseEntity<List<UserSimpleResponseDto>> getUsers(@RequestParam(required = false) String username, HttpServletRequest request) {
-        User currentUser = authService.getCurrentUser(request);
+        User currentUser =authService.getCurrentUser(request);
 
         List<UserSimpleResponseDto> users;
-        if (username == null || username.isEmpty()) {
-            users = userService.getAllUsers(currentUser);
-        } else {
-            users = userService.getUserByUsername(currentUser, username);
+        if (username == null||username.isEmpty()) {
+            users=userService.getAllUsers(currentUser);
+
+        }else {
+            users =userService.getUserByUsername(currentUser,username);
         }
 
         return ResponseEntity.ok(users);
     }
 
-
-    @PutMapping("/users/profile")
+    @PutMapping("/users/profile") //프로필 업데이트
     public ResponseEntity<UserDetailResponseDto> updateUser(@RequestBody UserUpdateRequestDto userUpdateRequestDto, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
         UserDetailResponseDto updated = userService.updateUser(currentUser, userUpdateRequestDto);
         return ResponseEntity.ok(updated);
     }
+
 
     @GetMapping("/users/{userId}/profile")
     public ResponseEntity<UserDetailResponseDto> getUserProfile(@PathVariable Long userId, HttpServletRequest request) {
@@ -56,4 +57,5 @@ public class UserController {
 
         return ResponseEntity.ok(userDetailResponseDto);
     }
+
 }

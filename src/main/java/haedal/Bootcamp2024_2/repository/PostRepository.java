@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Long countByUser(User user);
     List<Post> findByUser(User user);
-    List<Post> findByUserIn(List<User> users);
+    Long countByUser(User user);
 }

@@ -18,13 +18,36 @@ import java.util.Base64;
 public class ImageService {
     private final UserRepository userRepository;
     private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "src/main/resources/static");
-        // System.getProperty("user.dir"): 현재작업디렉토리의 절대경로
 
     @Autowired
     public ImageService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    public String updateUserImage(User user, MultipartFile image) throws IOException {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
+        String uniqueImageName = timestamp + "_" + image.getOriginalFilename();
+
+        Path filePath = uploadDir.resolve("userImages").resolve(uniqueImageName);
+        Files.createDirectories(filePath.getParent());  // 경로폴더 없으면 생성
+        image.transferTo(filePath.toFile());
+
+        user.setImageUrl("userImages/" + uniqueImageName);
+        userRepository.save(user);
+
+        return "userImages/" + uniqueImageName;
+    }
+
+
+    public String encodeImageToBase64(String imagePath) {
+        try {
+            Path path = Paths.get(imagePath);
+            byte[] imageBytes = Files.readAllBytes(path);
+            return Base64.getEncoder().encodeToString(imageBytes);
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     public String savePostImage(MultipartFile image) throws IOException {
         if (image.isEmpty()) {
@@ -39,38 +62,8 @@ public class ImageService {
         Files.createDirectories(filePath.getParent());  // 경로폴더 없으면 생성
         image.transferTo(filePath.toFile());
 
-        return "postImages/" + uniqueImageName;  // 상대 경로 반환
-    }
+        return "postImages/" + uniqueImageName;
 
 
-    public String updateUserImage(User user, MultipartFile image) throws IOException {
-        // 현재 시간을 기준으로 고유한 이미지 이름 생성
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
-        String uniqueImageName = timestamp + "_" + image.getOriginalFilename();
-
-        Path filePath = uploadDir.resolve("userImages").resolve(uniqueImageName);
-        Files.createDirectories(filePath.getParent());  // 경로폴더 없으면 생성
-        image.transferTo(filePath.toFile());
-
-        user.setImageUrl("userImages/" + uniqueImageName);
-        userRepository.save(user);
-
-        return "userImages/" + uniqueImageName;
-    }
-
-//    public Resource loadImageAsResource(String imageUrl) throws MalformedURLException {
-//        Path imagePath = uploadDir.resolve(imageUrl);
-//        Resource resource = new UrlResource(imagePath.toUri());
-//        return resource;
-//    }
-
-    public String encodeImageToBase64(String imagePath) {
-        try {
-            Path path = Paths.get(imagePath);
-            byte[] imageBytes = Files.readAllBytes(path);
-            return Base64.getEncoder().encodeToString(imageBytes);
-        } catch (IOException e) {
-            return null;
-        }
     }
 }

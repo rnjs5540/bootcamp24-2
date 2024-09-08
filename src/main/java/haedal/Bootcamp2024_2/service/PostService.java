@@ -30,26 +30,9 @@ public class PostService {
         this.imageService = imageService;
     }
 
-
-    public void savePost(Post post){
-        Post saved = postRepository.save(post);
+    public void savePost(Post post) {
+        Post saved=postRepository.save(post);
     }
-
-    public List<PostResponseDto> getFollowingUsersPosts(User currentUser) {
-        User user = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-        List<User> followingUsers = user.getFollowings().stream()
-                .map(follow -> follow.getFollowing())
-                .toList();
-
-        List<Post> posts = postRepository.findByUserIn(followingUsers);
-        posts.sort((p1, p2) ->
-                p2.getCreatedAt().compareTo(p1.getCreatedAt()));
-
-        return posts.stream().map(post -> convertPostToDto(user, post)).toList();
-    }
-
 
     public List<PostResponseDto> getPostsByUser(Long targetUserId) {
         User targetUser = userRepository.findById(targetUserId)
@@ -78,4 +61,7 @@ public class PostService {
                 post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))
         );
     }
+
+
+
 }

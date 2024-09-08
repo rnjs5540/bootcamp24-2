@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 public class PostController {
+
     private final PostService postService;
     private final LikeService likeService;
     private final AuthService authService;
@@ -35,14 +36,16 @@ public class PostController {
 
 
     @PostMapping("/posts")
-    public ResponseEntity<Void> createPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content,
-                                           HttpServletRequest request) throws IOException {
-        User currentUser = authService.getCurrentUser(request);
-        String imageUrl = imageService.savePostImage(image);
-        Post post = new Post(currentUser, content, imageUrl);
+    public ResponseEntity<Void> createPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content
+            ,HttpServletRequest request) throws IOException {
+        User currentUser =authService.getCurrentUser(request);
+        String imageUrl =imageService.savePostImage(image);
+        Post post =new Post(currentUser,content,imageUrl);
         postService.savePost(post);
         return ResponseEntity.ok().build();
+
     }
+
 
     @GetMapping("/posts/user/{userId}")
     public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
@@ -50,22 +53,12 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/posts/following")
-    public ResponseEntity<List<PostResponseDto>> getFollowingUsersPosts(HttpServletRequest request) {
-        User currentUser = authService.getCurrentUser(request);
-
-        List<PostResponseDto> posts = postService.getFollowingUsersPosts(currentUser);
-        return ResponseEntity.ok(posts);
-    }
-
-
     @PostMapping("/posts/{postId}/like")
     public ResponseEntity<Void> likePost(@PathVariable Long postId, HttpServletRequest request) {
         User currentUser = authService.getCurrentUser(request);
 
         likeService.likePost(currentUser, postId);
         return ResponseEntity.ok().build();
-
     }
 
     @DeleteMapping("/posts/{postId}/like")
@@ -83,4 +76,6 @@ public class PostController {
         List<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(currentUser, postId);
         return ResponseEntity.ok(usersWhoLikedPost);
     }
+
+
 }

@@ -15,27 +15,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false, unique = true)
     @Setter
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
     @Setter
+    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     @Setter
+    @Column(nullable = false)
     private String name;
 
-    @Column(length = 500)
     @Setter
+    @Column(length = 500)
     private String bio;
 
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
-
-    @Column(name = "image_url")
     @Setter
+    @Column(name = "image_url")
     private String imageUrl;
 
     @OneToMany(mappedBy = "user")

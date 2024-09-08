@@ -17,17 +17,18 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final ImageService imageService;
     private final PostRepository postRepository;
     private final FollowRepository followRepository;
-    private final ImageService imageService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PostRepository postRepository, FollowRepository followRepository, ImageService imageService) {
+    public UserService(UserRepository userRepository, ImageService imageService, PostRepository postRepository, FollowRepository followRepository) {
         this.userRepository = userRepository;
+        this.imageService = imageService;
         this.postRepository = postRepository;
         this.followRepository = followRepository;
-        this.imageService = imageService;
     }
+
 
 
     public UserSimpleResponseDto saveUser(User newUser) {
@@ -40,11 +41,28 @@ public class UserService {
         return convertUserToSimpleDto(newUser, newUser);
     }
 
+
+    ////////7차시 수정//
+    public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
+        String imageUrl = targetUser.getImageUrl();
+        String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
+
+        return new UserSimpleResponseDto(
+                targetUser.getId(),
+                targetUser.getUsername(),
+                targetUser.getName(),
+                imageData,
+                followRepository.existsByFollowerAndFollowing(currentUser, targetUser)
+        );
+    }
+
+    ///////////////////6-2///////////////////////////////////
     public List<UserSimpleResponseDto> getAllUsers(User currentUser) {
         List<User> users = userRepository.findAll();
         users.remove(currentUser);
-        return users.stream().map(user -> convertUserToSimpleDto(currentUser, user)).toList();
+        return users.stream().map(user->convertUserToSimpleDto(currentUser,user)).toList();
     }
+
 
     public List<UserSimpleResponseDto> getUserByUsername(User currentUser, String username) {
         List<UserSimpleResponseDto> user = new ArrayList<>();
@@ -55,7 +73,6 @@ public class UserService {
         return user;
     }
 
-
     public UserSimpleResponseDto getUserSimpleByUsername(User currentUser, String username) {
         User targetUser = userRepository.findByUsername(username).orElse(null);
         if (targetUser == null) {
@@ -65,13 +82,7 @@ public class UserService {
         return convertUserToSimpleDto(currentUser, targetUser);
     }
 
-    public UserDetailResponseDto getUserDetail(User currentUser, Long targetUserId) {
-        User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        return convertUserToDetailDto(currentUser, targetUser);
-    }
-
-
+    //setter 추가해야함.
     public UserDetailResponseDto updateUser(User currentUser, UserUpdateRequestDto userUpdateRequestDto) {
         if (userUpdateRequestDto.getUsername() != null) {
             currentUser.setUsername(userUpdateRequestDto.getUsername());
@@ -91,18 +102,6 @@ public class UserService {
         return convertUserToDetailDto(currentUser, currentUser);
     }
 
-    public UserSimpleResponseDto convertUserToSimpleDto(User currentUser, User targetUser) {
-        String imageUrl = targetUser.getImageUrl();
-        String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
-
-        return new UserSimpleResponseDto(
-                targetUser.getId(),
-                targetUser.getUsername(),
-                targetUser.getName(),
-                imageData,
-                followRepository.existsByFollowerAndFollowing(currentUser, targetUser)
-        );
-    }
 
     public UserDetailResponseDto convertUserToDetailDto(User currentUser, User targetUser) {
         String imageUrl = targetUser.getImageUrl();
@@ -118,9 +117,17 @@ public class UserService {
                 targetUser.getBio(),
                 targetUser.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")),
                 postRepository.countByUser(targetUser),
-                followRepository.countByFollowing(targetUser),
-                followRepository.countByFollower(targetUser)
+                followRepository.countByFollower(targetUser),
+                followRepository.countByFollowing(targetUser)
         );
     }
+
+
+    public UserDetailResponseDto getUserDetail(User currentUser, Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        return convertUserToDetailDto(currentUser, targetUser);
+    }
+
 }
 
