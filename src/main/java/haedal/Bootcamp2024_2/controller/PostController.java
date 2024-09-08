@@ -2,103 +2,80 @@ package haedal.Bootcamp2024_2.controller;
 
 import haedal.Bootcamp2024_2.domain.Post;
 import haedal.Bootcamp2024_2.domain.User;
-import haedal.Bootcamp2024_2.dto.request.PostRequestDto;
+import haedal.Bootcamp2024_2.dto.response.PostResponseDto;
 import haedal.Bootcamp2024_2.dto.response.UserSimpleResponseDto;
+import haedal.Bootcamp2024_2.service.AuthService;
+import haedal.Bootcamp2024_2.service.ImageService;
 import haedal.Bootcamp2024_2.service.LikeService;
 import haedal.Bootcamp2024_2.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
 public class PostController {
 
+    private final PostService postService;
+    private final LikeService likeService;
+    private final AuthService authService;
+    private final ImageService imageService;
+
     @Autowired
-    private PostService postService;
-    @Autowired
-    private LikeService likeService;
-
-
-    @PostMapping
-    public ResponseEntity<Void> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) throws IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User)session.getAttribute("user");
-
-        // 이미지 byte[]로 변경
-        byte[] imageBytes = Base64.getDecoder().decode(postRequestDto.getImage());
-        // 새로운 게시물 생성
-        Post post = new Post(currentUser, imageBytes, postRequestDto.getContext());
-
-        postService.savePost(post);
-        return ResponseEntity.ok().build();
+    public PostController(PostService postService, LikeService likeService, AuthService authService, ImageService imageService) {
+        this.postService = postService;
+        this.likeService = likeService;
+        this.authService = authService;
+        this.imageService = imageService;
     }
 
 
-    @GetMapping("/following")
-    public ResponseEntity<Page<Post>> getFollowingUsersPosts(HttpServletRequest request, Pageable pageable) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User) session.getAttribute("user");
+    @PostMapping("/posts")
+    public ResponseEntity<Void> createPost(@RequestParam("image") MultipartFile image, @RequestParam("content") String content
+            ,HttpServletRequest request) throws IOException {
+        User currentUser =authService.getCurrentUser(request);
+        String imageUrl =imageService.savePostImage(image);
+        Post post =new Post(currentUser,content,imageUrl);
+        postService.savePost(post);
+        return ResponseEntity.ok().build();
 
-        Page<Post> posts = postService.getFollowingUsersPosts(currentUser, pageable);
+    }
+
+
+    @GetMapping("/posts/user/{userId}")
+    public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
+        List<PostResponseDto> posts = postService.getPostsByUser(userId);
         return ResponseEntity.ok(posts);
     }
 
+    @PostMapping("/posts/{postId}/like")
+    public ResponseEntity<Void> likePost(@PathVariable Long postId, HttpServletRequest request) {
+        User currentUser = authService.getCurrentUser(request);
 
-    @PostMapping("/{postId}/like")
-    // ResponseEntity<Void>? ResponseEntity<String>?
-    public ResponseEntity<String> likePost(@PathVariable Long postId, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User currentUser = (User)session.getAttribute("user");
-
-        try {
-            likeService.likePost(currentUser, postId);
-            return ResponseEntity.ok().build();
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 이미 좋아요를 누른 경우 409 Conflict 반환
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); // 게시물을 찾을 수 없는 경우 404 Not Found 반환
-        }
+        likeService.likePost(currentUser, postId);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{postId}/like")
-    public ResponseEntity<String> unlikePost(HttpServletRequest request, @PathVariable Long postId) {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    @DeleteMapping("/posts/{postId}/like")
+    public ResponseEntity<Void> unlikePost(HttpServletRequest request, @PathVariable Long postId) {
+        User currentUser = authService.getCurrentUser(request);
 
-        User currentUser = (User) session.getAttribute("user");
-
-        try {
-            likeService.unlikePost(currentUser, postId);
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("좋아요가 존재하지 않습니다."); // 좋아요가 존재하지 않는 경우 404 Not Found 반환
-        }
+        likeService.unlikePost(currentUser, postId);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{postId}/like")
-    public ResponseEntity<Page<UserSimpleResponseDto>> getUsersWhoLikedPost(@PathVariable Long postId, Pageable pageable) {
-        Page<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(postId, pageable);
+    @GetMapping("/posts/{postId}/like")
+    public ResponseEntity<List<UserSimpleResponseDto>> getUsersWhoLikedPost(@PathVariable Long postId, HttpServletRequest request) {
+        User currentUser = authService.getCurrentUser(request);
+
+        List<UserSimpleResponseDto> usersWhoLikedPost = likeService.getUsersWhoLikedPost(currentUser, postId);
         return ResponseEntity.ok(usersWhoLikedPost);
     }
+
+
 }

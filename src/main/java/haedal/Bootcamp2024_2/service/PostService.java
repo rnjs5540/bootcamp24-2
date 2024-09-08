@@ -8,64 +8,60 @@ import haedal.Bootcamp2024_2.repository.LikeRepository;
 import haedal.Bootcamp2024_2.repository.PostRepository;
 import haedal.Bootcamp2024_2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
 public class PostService {
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
+    private final UserService userService;
+    private final ImageService imageService;
 
     @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private LikeRepository likeRepository;
-
-
-    public void savePost(Post post) throws IOException {
-        postRepository.save(post);
+    public PostService(PostRepository postRepository, UserRepository userRepository, LikeRepository likeRepository, UserService userService, ImageService imageService) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
+        this.userService = userService;
+        this.imageService = imageService;
     }
 
-    public Page<Post> getFollowingUsersPosts(User user, Pageable pageable) {
-        User managedUser = userRepository.findById(user.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+    public void savePost(Post post) {
+        Post saved=postRepository.save(post);
+    }
 
-        List<Long> followingIds = user.getFollowings().stream()
-                .map(follow -> follow.getFollowing().getUserId())
-                .toList();
+    public List<PostResponseDto> getPostsByUser(Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        return postRepository.findByUser_UserIdIn(followingIds, pageable);
+        List<Post> posts = postRepository.findByUser(targetUser);
+        posts.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+
+        return posts.stream().map(post -> convertPostToDto(targetUser, post)).toList();
     }
 
 
-    public Page<PostResponseDto> getPostsByUser(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-
-        Page<Post> posts = postRepository.findByUser(user, pageable);
-
-        return posts.map(this::convertPostToDto);
-    }
-
-    private PostResponseDto convertPostToDto(Post post) {
-        UserSimpleResponseDto userSimpleResponseDto = new UserSimpleResponseDto(
-                post.getUser().getUserId(),
-                post.getUser().getUsername(),
-                post.getUser().getUserImage()
-        );
-        Long likeCount = likeRepository.countByPost(post);
+    private PostResponseDto convertPostToDto(User currentUser, Post post) {
+        User author = post.getUser();
+        UserSimpleResponseDto userSimpleResponseDto = userService.convertUserToSimpleDto(currentUser, author);
+        String imageUrl = post.getImageUrl();
+        String imageData = imageService.encodeImageToBase64(System.getProperty("user.dir") + "/src/main/resources/static/" + imageUrl);
 
         return new PostResponseDto(
-                post.getPostId(),
+                post.getId(),
                 userSimpleResponseDto,
-                post.getImage(),
-                post.getContext(),
-                likeCount,
-                post.getCreatedAt()
+                imageData,
+                post.getContent(),
+                likeRepository.countByPost(post),
+                likeRepository.existsByUserAndPost(currentUser, post),
+                post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))
         );
     }
+
+
+
 }
